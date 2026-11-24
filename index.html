@@ -5,40 +5,71 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Fablemare — Horror Legends From Around the World</title>
 <meta name="description" content="Fablemare retells the world's oldest horror legends as animated stories. Watch on YouTube.">
+<meta property="og:title" content="Fablemare — Horror Legends From Around the World">
+<meta property="og:description" content="Every culture has a monster it warns its children about. Fablemare retells them.">
+<meta property="og:image" content="https://fablemare.com/banner.jpg">
+<meta name="theme-color" content="#08090b">
 <link rel="icon" href="favicon.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
   <a class="brand" href="/"><img src="logo.png" alt="Fablemare logo">FABLEMARE</a>
-  <nav><a href="https://www.youtube.com/@Fablemare">YouTube</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav>
+  <nav><a href="#legends">Legends</a><a href="https://www.youtube.com/@Fablemare">YouTube</a><a href="#about">About</a></nav>
 </header>
 
-<section class="hero">
-  <div>
-    <h1 class="sr">Fablemare — Horror legends from around the world</h1>
+<section class="hero" style="margin-top:0">
+  <div class="bg" role="img" aria-label="Fablemare: horror legends from around the world"></div>
+  <canvas aria-hidden="true"></canvas>
+  <div class="lantern" aria-hidden="true"></div>
+  <h1 class="sr">Fablemare — Horror legends from around the world</h1>
+  <div class="cta">
     <a class="btn" href="https://www.youtube.com/@Fablemare?sub_confirmation=1">Watch on YouTube</a>
+    <span class="scroll-cue" aria-hidden="true"></span>
   </div>
 </section>
 
 <main>
-  <h2>Every culture has a monster it warns its children about.</h2>
-  <p>Fablemare retells those warnings. Each episode takes an old folk legend and turns it into a short animated horror story, told with respect for the culture it comes from. We start with the legends of the Arabian Gulf and travel outward from there.</p>
+  <section class="reveal">
+    <p class="eyebrow">The Studio</p>
+    <h2>Every culture has a monster it warns its children about. <em>We tell their stories.</em></h2>
+    <p class="lead">Fablemare takes old folk legends and turns them into short animated horror stories, told with respect for the cultures they come from. We begin with the legends of the Arabian Gulf and travel outward from there.</p>
+  </section>
 
-  <div class="cards">
-    <div class="card"><h3>Umm Al Duwais</h3><p>The woman who smells of oud, and the men who follow her.</p></div>
-    <div class="card"><h3>Bu Darya</h3><p>The Father of the Sea, who climbs aboard for the sailors who fall asleep.</p></div>
-    <div class="card"><h3>More coming</h3><p>New legends every week on Shorts, with full episodes on the channel.</p></div>
-  </div>
+  <section id="legends">
+    <p class="eyebrow reveal">The Legends</p>
+    <h2 class="reveal">Choose a story. <em>If you dare.</em></h2>
+    <div class="cards">
+      <a class="card reveal" href="https://www.youtube.com/shorts/KRvkH0ST0SA">
+        <img src="umm.jpg" alt="A cloaked woman on a seaside promenade at night" loading="lazy">
+        <div class="meta"><span class="num">I</span><h3>Umm Al Duwais</h3><p>She smells of oud and gold. Whatever you do, don't follow her.</p><span class="go">Watch the legend →</span></div>
+      </a>
+      <a class="card reveal" href="https://www.youtube.com/@Fablemare/shorts">
+        <img src="budarya.jpg" alt="A sailor holding a lantern over dark water" loading="lazy">
+        <div class="meta"><span class="num">II</span><h3>Bu Darya</h3><p>The Father of the Sea climbs aboard for the ones who fall asleep.</p><span class="go">Arrives 26 November →</span></div>
+      </a>
+      <a class="card reveal" href="https://www.youtube.com/@Fablemare?sub_confirmation=1">
+        <img src="more.jpg" alt="An old illustrated scroll of three hooded figures by candlelight" loading="lazy">
+        <div class="meta"><span class="num">III</span><h3>More Are Coming</h3><p>New legends every week. Subscribe so they find you first.</p><span class="go">Subscribe →</span></div>
+      </a>
+    </div>
+  </section>
 
-  <h2>About the studio</h2>
-  <p>Fablemare is an independent channel. Stories are original retellings; visuals, narration and music are made with the help of AI tools and edited by hand. Videos are labelled as altered or synthetic content on YouTube.</p>
-  <p>Business and collaboration enquiries: <a href="mailto:fablemarestudio@gmail.com">fablemarestudio@gmail.com</a></p>
+  <section id="about" class="split">
+    <div class="reveal">
+      <p class="eyebrow">About</p>
+      <h2>Old warnings, <em>told again.</em></h2>
+      <p class="lead">Fablemare is an independent channel. Every story is an original retelling of a real legend. Visuals, narration and music are made with the help of AI tools and finished by hand, and every video is labelled as altered or synthetic content on YouTube.</p>
+      <p class="lead">For business and collaborations: <a href="mailto:fablemarestudio@gmail.com">fablemarestudio@gmail.com</a></p>
+    </div>
+    <blockquote class="quote reveal">“If you smell oud on an empty street at night… don't turn around.”<span>Umm Al Duwais</span></blockquote>
+  </section>
 </main>
 
 <footer>
   <span>© 2026 Fablemare</span>
-  <span><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></span>
+  <span><a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Service</a></span>
 </footer>
+<script src="fx.js" defer></script>
 </body>
 </html>
