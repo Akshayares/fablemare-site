@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Don't Look Back — An Umm Al Duwais game | Fablemare</title>
+<title>Don't Look Back — How many nights can you survive? | Fablemare</title>
 <meta name="description" content="Walk home along the corniche at 2 AM. Stay in the light. Don't pick up her gold. And whatever you hear… don't look back. A free horror game based on the Emirati legend of Umm Al Duwais.">
 <meta property="og:title" content="Don't Look Back — Fablemare">
-<meta property="og:description" content="Stay in the light. Don't take her gold. Don't look back. Can you make it home?">
-<meta property="og:image" content="https://fablemare.com/follow/img/woman.jpg">
+<meta property="og:description" content="Stay in the light. Don't take her gold. Don't look back. How many nights can you survive? Beat the leaderboard.">
+<meta property="og:image" content="https://fablemare.com/follow/img/woman.jpg?v=2">
 <meta name="theme-color" content="#08090b">
 <link rel="icon" href="../favicon.png">
 <link rel="preload" href="../cardo-bold.woff2" as="font" type="font/woff2" crossorigin>
@@ -26,7 +26,7 @@ button{font:inherit;color:inherit}
 .brand img{width:30px;height:30px;border-radius:50%;box-shadow:0 0 0 1px rgba(201,164,92,.4)}
 .pill{background:rgba(7,8,10,.4);border:1px solid rgba(201,164,92,.4);border-radius:30px;padding:6px 14px;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);cursor:pointer}
 .pill:hover{color:var(--ink);border-color:var(--gold)}
-.hud{position:fixed;left:0;right:0;top:58px;z-index:15;display:none;padding:0 4vw;pointer-events:none}
+.hud{position:fixed;left:0;right:0;top:96px;z-index:15;display:none;padding:0 4vw;pointer-events:none}
 .hud.on{display:block}
 .track{position:relative;height:2px;background:rgba(255,255,255,.12);margin:0 auto;max-width:min(560px,calc(100% - 70px))}
 .track i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(201,164,92,.3),var(--gold));width:0}
@@ -44,7 +44,7 @@ button{font:inherit;color:inherit}
 .turn{position:fixed;left:50%;top:46%;z-index:17;transform:translate(-50%,-50%) scale(.9);padding:16px 34px;background:rgba(120,20,20,.25);border:1px solid rgba(255,120,90,.7);color:#ffd6c7;letter-spacing:.32em;text-transform:uppercase;font-size:.86rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;box-shadow:0 0 40px rgba(255,80,50,.25)}
 .turn.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{50%{box-shadow:0 0 70px rgba(255,80,50,.55);transform:translate(-50%,-50%) scale(1.05)}}
-.hint{position:fixed;left:0;right:0;top:120px;z-index:16;text-align:center;font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);opacity:0;transition:opacity .4s;pointer-events:none}
+.hint{position:fixed;left:0;right:0;top:160px;z-index:16;text-align:center;font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);opacity:0;transition:opacity .4s;pointer-events:none}
 .hint.on{opacity:1}
 .pad{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));z-index:18;display:none;width:92px;height:92px;border-radius:50%;border:1px solid rgba(201,164,92,.5);background:rgba(7,8,10,.35);backdrop-filter:blur(4px);color:var(--ink);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;align-items:center;justify-content:center;touch-action:none}
 .pad.active{background:rgba(201,164,92,.28)}
@@ -52,7 +52,7 @@ button{font:inherit;color:inherit}
 #padRun{right:24px}
 #padTake{left:24px;width:84px;height:84px;border-color:rgba(255,200,110,.7);color:#ffd99a}
 .touch .pad.show{display:flex}
-.overlay{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 7vw 40px;opacity:0;pointer-events:none;transition:opacity 1s;overflow:auto}
+.overlay{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 7vw 40px;opacity:0;pointer-events:none;transition:opacity .45s;overflow:auto}
 .overlay.on{opacity:1;pointer-events:auto}
 .overlay .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.42) saturate(.9);z-index:-2}
 .overlay::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(7,8,10,.2),rgba(7,8,10,.9) 75%);z-index:-1}
@@ -78,6 +78,37 @@ button{font:inherit;color:inherit}
 .legal{position:fixed;bottom:8px;left:0;right:0;text-align:center;font-size:.7rem;color:#5d5a54;z-index:31}
 .legal a{color:inherit}
 @media (max-width:640px){.rules{grid-template-columns:1fr}.brand span{display:none}.bar{width:56px}.meters{letter-spacing:.12em}}
+.score{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:21;text-align:center;pointer-events:none;display:none}
+.score.on{display:block}
+.score b{display:block;font-size:clamp(1.5rem,3.4vw,2.2rem);font-weight:700;color:#f3e6c8;letter-spacing:.06em;text-shadow:0 0 18px rgba(255,186,100,.35);line-height:1}
+.score small{font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.score .mult{color:var(--gold)}
+.card{position:fixed;inset:0;z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;opacity:0;transition:opacity .5s}
+.card.on{opacity:1}
+.card .n{font-size:.75rem;letter-spacing:.5em;text-transform:uppercase;color:var(--teal)}
+.card .big{font-size:clamp(2.6rem,9vw,6rem);font-weight:700;letter-spacing:.14em;margin-right:-.14em;color:#f3e6c8;text-shadow:0 0 40px rgba(255,186,100,.35)}
+.card .sub{color:#d6ccb9;font-style:italic;font-size:1.1rem;margin-top:6px;padding:0 6vw}
+.card .tally{margin-top:16px;font-size:.9rem;letter-spacing:.12em;color:var(--gold);white-space:pre-line;line-height:1.8}
+.big-score{font-size:clamp(3rem,10vw,5.5rem);font-weight:700;color:#f3e6c8;line-height:1;margin:10px 0 4px;text-shadow:0 0 30px rgba(255,186,100,.35)}
+.newbest{display:inline-block;margin-top:8px;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;animation:pulse2 1.2s ease-in-out infinite}
+@keyframes pulse2{50%{box-shadow:0 0 22px rgba(201,164,92,.55)}}
+.submit{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.submit input{background:rgba(7,8,10,.6);border:1px solid rgba(201,164,92,.5);color:var(--ink);font:inherit;font-size:1rem;padding:11px 14px;width:200px;letter-spacing:.06em;outline:none;user-select:text;-webkit-user-select:text}
+.submit input:focus{border-color:var(--gold)}
+.board{margin:22px auto 0;max-width:420px;text-align:left;font-size:.95rem}
+.board h3{margin:0 0 8px;font-weight:400;font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--teal);text-align:center}
+.board ol{list-style:none;margin:0;padding:0;max-height:240px;overflow:auto}
+.board li{display:grid;grid-template-columns:2.2em 1fr auto auto;gap:10px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.06);color:#d6ccb9}
+.board li .r{color:var(--muted)}
+.board li .s{color:#f3e6c8;font-weight:700}
+.board li .ni{color:var(--muted);font-size:.8rem}
+.board li.me{background:rgba(201,164,92,.12);color:#f3e6c8}
+.board li:nth-child(1) .r{color:#e7c06a}.board li:nth-child(2) .r{color:#cfd6da}.board li:nth-child(3) .r{color:#c98a5a}
+.board .note{color:var(--muted);font-size:.78rem;text-align:center;margin-top:8px}
+.ach{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.ach span{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:4px 9px;border:1px solid #2a2d33;color:#55524c}
+.ach span.got{border-color:rgba(201,164,92,.6);color:var(--gold)}
+.overlay .retry{margin-top:14px;font-size:.74rem;letter-spacing:.2em;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -86,6 +117,7 @@ button{font:inherit;color:inherit}
   <a class="brand" href="/"><img src="../logo.png" alt="Fablemare"><span>FABLEMARE</span></a>
   <button class="pill" id="sound">Sound on</button>
 </div>
+<div class="score" id="score"><small id="nightLbl">Night 1</small><b id="scoreVal">0</b><small class="mult" id="multLbl"></small></div>
 <div class="hud" id="hud">
   <div class="track"><i id="prog"></i><u id="dot"></u><b>HOME</b></div>
   <div class="meters">
@@ -100,37 +132,47 @@ button{font:inherit;color:inherit}
 <button class="pad" id="padTake">Take</button>
 <button class="pad" id="padWalk">Walk</button>
 <button class="pad" id="padRun">Run</button>
+<div class="card" id="card"><div class="n" id="cardN"></div><div class="big" id="cardBig"></div><div class="sub" id="cardSub"></div><div class="tally" id="cardTally"></div></div>
 
 <div class="overlay on" id="intro">
   <div class="bg" style="background-image:url(img/woman.jpg?v=2);background-position:60% center"></div>
   <div class="inner">
     <p class="eyebrow">A Fablemare game · Umm Al Duwais</p>
     <h1>Don't Look Back</h1>
-    <p>2:14 AM. You're walking home along the corniche. Somewhere behind you, someone is burning oud.</p>
+    <p>Every night you walk home along the corniche. Every night, she follows. How many nights can you survive?</p>
     <div class="rules">
       <div><span>Stay in the light.</span> She never steps into it.</div>
       <div><span>Breathe.</span> Running is fast, but you tire.</div>
-      <div><span>Gold in the dark?</span> It's hers. Take it at your own risk.</div>
+      <div><span>Take her gold.</span> More points, but she gets faster.</div>
       <div><span>Whatever she says…</span> don't turn around.</div>
     </div>
-    <div class="keys" id="keys">Hold <kbd>→</kbd> or <kbd>D</kbd> to walk · <kbd>Shift</kbd> to run · <kbd>E</kbd> to take gold</div>
-    <div class="found" id="found0"></div>
-    <div class="btns"><button class="btn" id="start">Begin</button></div>
+    <div class="keys" id="keys">Hold <kbd>→</kbd> or <kbd>D</kbd> to walk · <kbd>Shift</kbd> to run · <kbd>E</kbd> to take gold · <kbd>R</kbd> to retry</div>
+    <p class="stats" id="bestLine" style="margin-top:14px"></p>
+    <div class="btns"><button class="btn" id="start">Play</button><button class="btn ghost" id="showBoard">Leaderboard</button></div>
+    <div class="board" id="board0" style="display:none"></div>
   </div>
 </div>
+
 <div class="overlay" id="end">
   <div class="bg" id="endBg"></div>
   <div class="inner">
-    <p class="eyebrow" id="endNo"></p>
-    <h2 id="endTitle"></h2>
-    <p id="endText"></p>
-    <div class="found" id="found1"></div>
+    <p class="eyebrow" id="endNo">Taken on night 1</p>
+    <h2 id="endTitle">TAKEN</h2>
+    <div class="big-score" id="endScore">0</div>
     <p class="stats" id="endStats"></p>
+    <div id="newBest"></div>
+    <form class="submit" id="submit" style="display:none" autocomplete="off">
+      <input id="name" maxlength="14" placeholder="Your name" aria-label="Your name for the leaderboard">
+      <button class="btn" type="submit">Save score</button>
+    </form>
+    <div class="board" id="board1"></div>
+    <div class="ach" id="ach"></div>
     <div class="btns">
-      <button class="btn" id="again">Play again</button>
-      <a class="btn" href="https://www.youtube.com/@Fablemare">Watch the full legend</a>
+      <button class="btn" id="again">Try again</button>
+      <a class="btn ghost" href="https://www.youtube.com/@Fablemare">Watch the legend</a>
       <button class="btn ghost" id="share">Share</button>
     </div>
+    <p class="retry" id="retryHint">Press R to try again</p>
   </div>
 </div>
 <p class="legal" id="legal">An original game based on an old Emirati legend · <a href="/privacy.html">Privacy</a></p>
@@ -138,31 +180,31 @@ button{font:inherit;color:inherit}
 <script>
 (() => {
 'use strict';
+/* Leaderboard endpoint (Google Apps Script web app). Empty = this device only. */
+const LB_URL = '';
+
 const $ = id => document.getElementById(id);
 const cv = $('cv'), cx = cv.getContext('2d');
 const touch = matchMedia('(pointer: coarse)').matches;
-if (touch) { document.body.classList.add('touch'); $('keys').textContent = 'Hold WALK or RUN · tap TAKE to pick up gold' + (innerHeight > innerWidth ? ' · best in landscape' : ''); }
+if (touch) { document.body.classList.add('touch'); $('keys').textContent = 'Hold WALK or RUN · tap TAKE to pick up gold' + (innerHeight > innerWidth ? ' · best in landscape' : ''); $('retryHint').textContent = ''; }
 let W, H, DPR, S;
 function resize(){ DPR = Math.min(devicePixelRatio||1, 2); W = innerWidth; H = innerHeight; cv.width = W*DPR; cv.height = H*DPR; cx.setTransform(DPR,0,0,DPR,0,0); S = Math.min(H/11, W/8.5); }
 addEventListener('resize', resize); resize();
 const rnd = (a,b) => a + Math.random()*(b-a);
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const fmt = n => Math.round(n).toLocaleString('en-US');
 
-/* endings */
-const E = {
-  taken:{n:1,img:'end_taken',pos:'45%',title:'TAKEN',name:'The Follower',t:"Her hand is cold, and the smell of oud fills everything. No one hears anything on the corniche at 2 AM. In the morning, all that's left is a single gold bangle on the stones."},
-  looked:{n:1,img:'end_taken',pos:'45%',title:'TAKEN',name:'The Follower',t:"You turned around. Of course you did. Everyone does, in the end. She was so much closer than you thought."},
-  morning:{n:2,img:'end_survived',title:'MORNING',name:'The One Who Never Looked Back',t:"You reach your door as the sky turns gold. Your hands won't stop shaking. You never walk that way at night again. The ones who survive her are the ones who never look back."},
-  marked:{n:3,img:'end_marked',title:'MARKED',name:'The Keeper of Her Gold',t:"You made it home, with her gold in your pocket. That's the trick. She didn't need to catch you tonight. Tomorrow night, you'll smell oud at your window."},
-  seen:{n:4,img:'end_seen',pos:'40%',title:'SEEN',name:'The Witness',t:"For one second, close enough to touch, you saw what was under her robe. Two curved blades where her feet should be. You saw, and you lived. They say she always spares one, so the story gets told."}
-};
-const KEYS = ['taken','morning','marked','seen'];
-let got = []; try { got = JSON.parse(localStorage.getItem('fm_dlb_endings')||'[]'); } catch(e){}
-let best = 0; try { best = +localStorage.getItem('fm_dlb_best')||0; } catch(e){}
-const save = () => { try { localStorage.setItem('fm_dlb_endings', JSON.stringify(got)); localStorage.setItem('fm_dlb_best', best); } catch(e){} };
-const dots = el => el.innerHTML = KEYS.map(k => `<span class="${got.includes(k)?'got':''}"></span>`).join('');
-dots($('found0'));
-['end_taken','end_survived','end_marked','end_seen'].forEach(k => { const i = new Image(); i.src = 'img/'+k+'.jpg'; });
+/* saved data (this device only) */
+const store = { get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } }, set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} } };
+let bestScore = store.get('fm_dlb_best_score', 0), bestNight = store.get('fm_dlb_best_night', 0), achGot = store.get('fm_dlb_ach', []), myName = store.get('fm_dlb_name', '');
+const ACH = [
+  ['night3','Survive night 3'],['night5','Survive night 5'],['night10','Survive night 10'],
+  ['close','Close call'],['greedy','5 gold in one night'],['pure','A night with no gold'],['resist','Resist her 5 times'],['sprint','Night under 40s']
+];
+function unlock(k){ if (!achGot.includes(k)) { achGot.push(k); store.set('fm_dlb_ach', achGot); popup('★ ' + ACH.find(a=>a[0]===k)[1], '#e7c06a', 1.6); } }
+function updateBestLine(){ $('bestLine').textContent = bestScore ? `Your best: ${fmt(bestScore)} · night ${bestNight}` : ''; }
+updateBestLine();
+['end_taken'].forEach(k => { const i = new Image(); i.src = 'img/'+k+'.jpg'; });
 
 /* audio */
 let soundOn = true, ac = null, master;
@@ -176,23 +218,29 @@ const sfx = {
   heart: v => { if(!ac) return; const t0=ac.currentTime; tone(52,t0,0.22,0.5*v); tone(46,t0+0.2,0.22,0.35*v); },
   boom: v => { if(!ac) return; tone(90,ac.currentTime,2.2,0.9*v,'sine',26); noise(1.4,0.6*v,120,0.5); },
   breath: v => noise(1.1, 0.25*v, 1400, 0.6),
-  pickup: () => { if(!ac) return; const t0=ac.currentTime; tone(1568,t0,0.5,0.12); tone(2349,t0+0.08,0.7,0.1); },
-  whisper: () => { noise(1.6, 0.35, 2600, 0.8); noise(1.2, 0.2, 900, 0.5); }
+  pickup: m => { if(!ac) return; const t0=ac.currentTime, k = Math.pow(2, Math.min(m,6)/12); tone(1568*k,t0,0.5,0.12); tone(2349*k,t0+0.08,0.7,0.1); },
+  whisper: () => { noise(1.6, 0.35, 2600, 0.8); noise(1.2, 0.2, 900, 0.5); },
+  bonus: () => { if(!ac) return; const t0=ac.currentTime; [523,659,784,1047].forEach((f,i)=>tone(f, t0+i*0.07, 0.35, 0.08, 'triangle')); },
+  clear: () => { if(!ac) return; const t0=ac.currentTime; [392,523,659,784,1047].forEach((f,i)=>tone(f, t0+i*0.11, 0.9, 0.09, 'triangle')); }
 };
 function fadeAmb(to, ms){ ms=ms||1200; const from=amb.volume, t0=performance.now(); (function f(tt){ const k=Math.min(1,(tt-t0)/ms); amb.volume=clamp(from+(to-from)*k,0,1); if(k<1) requestAnimationFrame(f); })(t0); }
 $('sound').onclick = () => { soundOn=!soundOn; $('sound').textContent = soundOn?'Sound on':'Sound off'; if(master) master.gain.value = soundOn?1:0; if (soundOn) { amb.play().catch(()=>{}); fadeAmb(state==='play'?0.45:0.3); } else fadeAmb(0,300); };
 
-/* world */
-const L = 300;
+/* world: each night is a level */
+let L = 240, night = 1;
 let lamps, stalls, bangles, palms, skyline, stars, fog, embers, smoke;
+const NIGHT_SUBS = ['', "She's out tonight.", 'The lamps are older here.', 'She learned your route.', 'Fewer lights. Faster steps.', "Don't trust the gold.", 'The karak stall is closed.', 'She is hungry tonight.', 'Every lamp is flickering.', 'She knows your name.', 'The longest night.'];
 function build(){
+  const N = night;
+  L = Math.min(420, 170 + N*30);
   lamps = []; let x = 10;
-  while (x < L - 14) { lamps.push({x, r: 6.2, broken: Math.random() < 0.22 && x > 40, ph: Math.random()*10, dimv: 1}); x += rnd(20, 32) + x/L*10; }
-  stalls = [{x: L*0.38, r: 11}, {x: L*0.72, r: 11}];
+  const pBroken = Math.min(0.6, 0.1 + N*0.06);
+  while (x < L - 14) { lamps.push({x, r: 6.2, broken: Math.random() < pBroken && x > 30, ph: Math.random()*10, dimv: 1}); x += rnd(19, 28) + Math.min(14, N*1.6) + x/L*4; }
+  stalls = N < 6 ? [{x: L*rnd(.45,.6), r: 11}] : (Math.random() < .5 ? [{x: L*rnd(.4,.7), r: 10}] : []);
   lamps = lamps.filter(l => !stalls.some(s => Math.abs(s.x-l.x) < 14));
   bangles = [];
   const pts = [...lamps.map(l=>l.x), ...stalls.map(s=>s.x)].sort((a,b)=>a-b);
-  for (let i=0;i<pts.length-1;i++){ const gap = pts[i+1]-pts[i]; if (gap > 19 && Math.random() < 0.6) bangles.push({x: pts[i]+gap*rnd(.4,.6), taken:false, t:Math.random()*6}); }
+  for (let i=0;i<pts.length-1;i++){ const gap = pts[i+1]-pts[i]; if (gap > 17 && Math.random() < 0.75) bangles.push({x: pts[i]+gap*rnd(.4,.6), taken:false, t:Math.random()*6}); }
   palms = []; for (let p=-30; p<L*0.6+60; p+=rnd(5,11)) palms.push({x:p, h:rnd(6.5,10), lean:rnd(-.18,.18), s:rnd(.85,1.15)});
   skyline = []; for (let p=-60; p<L*0.12+160; p+=rnd(2.5,6)) skyline.push({x:p, w:rnd(2,5), h:rnd(4,16)*(Math.random()<.15?1.8:1), lit:Math.random()});
   stars = Array.from({length:110},()=>({x:Math.random(), y:Math.random()*0.5, s:Math.random()*1.3+0.2, t:Math.random()*6}));
@@ -211,29 +259,48 @@ function lightAt(x, tt){
 const inStall = x => stalls.some(s => Math.abs(x-s.x) < s.r*0.75);
 
 /* state */
-let state = 'menu', P, Her, t = 0, startT = 0, gold = 0, oud = 0, seen = false, nextWhisper = 0, whisperOn = 0, lastStep = 0, lastBeat = 0, lastChime = 0, shake = 0, flash = 0, cam = 0, menuX = 0;
+let state = 'menu', P, Her, t = 0, nightT = 0, runT = 0, gold = 0, oud = 0, seen = false, nextWhisper = 0, whisperOn = 0, whisperResolved = true, lastStep = 0, lastBeat = 0, lastChime = 0, shake = 0, flash = 0, cam = 0, menuX = 0;
+let score = 0, nightScore = 0, distScored = 0, mult = 1, closeArmed = false, resisted = 0, popups = [], cardT = 0, onCardDone = null, deathCause = 'taken';
 const input = {walk:false, run:false, take:false};
-function reset(){
+function resetNight(){
   build();
   P = {x: 2, v: 0, stam: 1, phase: 0};
-  Her = {on:false, x:-50, a:0, cool: 7};
-  startT = performance.now(); gold = 0; oud = 0; seen = false; nextWhisper = 5; whisperOn = 0; shake = 0; flash = 0; cam = P.x; lastStep = 0;
+  Her = {on:false, x:-50, a:0, cool: Math.max(3, 7 - night*0.5), wait:0};
+  gold = 0; oud = 0; nextWhisper = rnd(5,8); whisperOn = 0; whisperResolved = true; shake = 0; cam = P.x; lastStep = 0; nightT = 0; distScored = 0; mult = 1; closeArmed = false; nightScore = 0;
 }
-reset();
+function newRun(){ night = 1; score = 0; runT = 0; seen = false; resisted = 0; popups = []; resetNight(); }
+newRun();
+
+/* popups */
+function popup(text, color, life){ popups.push({text, color: color||'#f3e6c8', life: life||1.2, max: life||1.2, y: 0}); }
+function drawPopups(dt){
+  cx.textAlign = 'center';
+  popups.forEach((p,i) => { p.life -= dt; p.y += dt*40; const a = clamp(p.life/p.max*1.5, 0, 1);
+    cx.font = `700 ${Math.max(16, S*0.42)}px Cardo, Georgia, serif`; cx.fillStyle = p.color; cx.globalAlpha = a; cx.shadowColor = 'rgba(0,0,0,.9)'; cx.shadowBlur = 8;
+    cx.fillText(p.text, W*0.36, H*0.8 - S*3.4 - p.y - i*S*0.5); cx.shadowBlur = 0; cx.globalAlpha = 1; });
+  popups = popups.filter(p => p.life > 0);
+}
+function addScore(n, label, color){ score += n; nightScore += n; if (label) { popup(label + '  +' + fmt(n), color); sfx.bonus(); } }
 
 /* input */
 const held = new Set();
-addEventListener('keydown', e => { const k = e.key.toLowerCase(); held.add(k); if (['arrowright','arrowleft',' '].includes(k)) e.preventDefault(); if (k==='e') input.take = true; if (k==='enter' && state!=='play') ($('intro').classList.contains('on') ? $('start') : $('again')).click(); });
+addEventListener('keydown', e => { const k = e.key.toLowerCase(); if (document.activeElement === $('name')) return; held.add(k); if (['arrowright','arrowleft',' '].includes(k)) e.preventDefault();
+  if (k==='e') input.take = true;
+  if ((k==='r' || k==='enter') && state === 'dead') begin();
+  if (k==='enter' && state === 'menu') begin(); });
 addEventListener('keyup', e => held.delete(e.key.toLowerCase()));
 addEventListener('blur', () => { held.clear(); input.walk = input.run = false; });
 function hold(btn, key){ const on = e => { e.preventDefault(); input[key]=true; btn.classList.add('active'); }, off = () => { input[key]=false; btn.classList.remove('active'); };
   btn.addEventListener('pointerdown', on); ['pointerup','pointercancel','pointerleave'].forEach(ev => btn.addEventListener(ev, off)); }
 hold($('padWalk'),'walk'); hold($('padRun'),'run');
 $('padTake').addEventListener('pointerdown', e => { e.preventDefault(); input.take = true; });
-$('turn').addEventListener('click', () => { if (state==='play') finish('looked'); });
+$('turn').addEventListener('click', () => { if (state==='play') die('looked'); });
 
-const LINES = ["Aren't you coming?","You dropped something…","Wait for me.","Why are you walking so fast?","Look at me.","I'm right behind you."];
+const LINES = ["Aren't you coming?","You dropped something…","Wait for me.","Why are you walking so fast?","Look at me.","I'm right behind you.","Turn around. Just once.","I have your gold…"];
 function whisper(text, dur){ $('whisper').textContent = text; $('whisper').classList.add('on'); whisperOn = dur; }
+
+/* night cards */
+function showCard(n, big, sub, tally, dur, done){ $('cardN').textContent = n; $('cardBig').textContent = big; $('cardSub').textContent = sub||''; $('cardTally').textContent = tally||''; $('card').classList.add('on'); cardT = dur; onCardDone = done; }
 
 /* loop */
 let prev = performance.now();
@@ -241,9 +308,13 @@ function frame(now){
   requestAnimationFrame(frame);
   const dt = Math.min(0.05, (now - prev)/1000); prev = now; t += dt;
   if (state === 'play') update(dt);
+  if (state === 'card') { cardT -= dt; if (cardT <= 0) { $('card').classList.remove('on'); const f = onCardDone; onCardDone = null; state = 'play'; if (f) f(); } }
+  if (shake > 0) shake -= dt;
   draw(dt);
+  drawPopups(dt);
 }
 function update(dt){
+  nightT += dt; runT += dt;
   const wantWalk = input.walk || input.run || held.has('arrowright') || held.has('d');
   const wantRun = (input.run || held.has('shift')) && wantWalk;
   const shaky = oud > 85 ? 0.78 : 1;
@@ -253,65 +324,116 @@ function update(dt){
   if (P.stam < 0.03 && wantRun && Math.random() < dt*0.8) sfx.breath(0.8);
   P.x += P.v * dt; P.phase += P.v * dt * 2.2;
   if (P.v > 0.4 && P.phase - lastStep > Math.PI) { lastStep = P.phase; sfx.step(Math.min(1, P.v/3)); }
-  const lit = lightAt(P.x, t), safe = inStall(P.x), d = P.x - Her.x;
+  // distance points
+  while (P.x - distScored >= 1) { distScored += 1; score += night; nightScore += night; }
   for (const l of lamps) l.dimv = dim(l);
-  if (lit > 0.15) oud -= dt*9; else oud += dt*(8 + gold*1.5 + P.x/L*3);
+  const lit = lightAt(P.x, t), safe = inStall(P.x), d = P.x - Her.x;
+  const N = night;
+  if (lit > 0.15) oud -= dt*9; else oud += dt*(8 + gold*1.5 + N*0.9);
   if (Her.on && d < 16 && lit <= 0.15) oud += dt*(16-d)*1.6;
   if (safe) oud -= dt*35;
   oud = clamp(oud, 0, 100);
   Her.cool -= dt;
-  if (!Her.on && Her.cool <= 0 && lit < 0.15 && oud > 28 && !safe) { Her.on = true; Her.x = P.x - rnd(14, 18); Her.a = 0; sfx.chime(0.5); }
+  if (!Her.on && Her.cool <= 0 && lit < 0.15 && oud > Math.max(12, 30 - N*2) && !safe) { Her.on = true; Her.x = P.x - rnd(14, 18) + Math.min(4, N*0.4); Her.a = 0; sfx.chime(0.5); }
   if (Her.on) {
     Her.a = Math.min(1, Her.a + dt*0.7);
-    const sp = Math.min(3.7 + P.x/L*0.4 + gold*0.25, 1.9 + oud*0.03 + gold*0.35 + P.x/L*0.6);
+    const cap = Math.min(4.45, 3.5 + N*0.09) + gold*0.22;
+    const sp = Math.min(cap, 1.9 + oud*0.03 + gold*0.3 + N*0.12);
     const nx = Her.x + sp*dt;
-    // she will not step into the light while you stand in it; if you are in the dark, she passes through and the lamps die around her
     if (!(lit > 0.15 && lightAt(nx + 0.6, t) > 0.2)) Her.x = nx;
     if (Her.x < P.x - 34) Her.x = P.x - 34;
-    Her.wait = lit > 0.15 ? (Her.wait||0) + dt : 0;
-    if (safe || Her.wait > 3.5) { Her.a -= dt*1.5; if (Her.a <= 0) { Her.on = false; Her.cool = safe ? 7 : 3; Her.wait = 0; } }
+    Her.wait = lit > 0.15 ? Her.wait + dt : 0;
+    const patience = Math.max(1.6, 3.5 - N*0.15);
+    if (safe || Her.wait > patience) { Her.a -= dt*1.5; if (Her.a <= 0) { Her.on = false; Her.cool = safe ? 6 : Math.max(1.5, 3 - N*0.15); Her.wait = 0; } }
     const dd = P.x - Her.x;
     if (t - lastChime > 1.6 - Math.min(1.1, (20-Math.min(20,dd))*0.06)) { lastChime = t; sfx.chime(clamp(1 - dd/30, 0.08, 1)); }
     if (dd < 4.6 && dd > 1 && !seen) { seen = true; flash = 0.45; }
-    if (dd < 1.0) return finish('taken');
+    if (dd < 2.6) closeArmed = true;
+    if (closeArmed && dd > 9) { closeArmed = false; addScore(150*N, 'CLOSE CALL!', '#ffb36b'); unlock('close'); }
+    if (dd < 1.0) return die('taken');
     if (Math.random() < dt*0.7) smoke.push({x: Her.x + rnd(-.5,.5), y: rnd(1, 2.4), a: 0.5, v: rnd(.3,.8)});
     nextWhisper -= dt;
-    if (nextWhisper <= 0 && dd < 16 && dd > 2.5) { whisper(LINES[(Math.random()*LINES.length)|0], 3.2); sfx.whisper(); $('turn').classList.add('on'); nextWhisper = rnd(9, 15); shake = 0.25; }
+    if (nextWhisper <= 0 && dd < 16 && dd > 2.5) { whisper(LINES[(Math.random()*LINES.length)|0], 3.2); sfx.whisper(); $('turn').classList.add('on'); whisperResolved = false; nextWhisper = Math.max(5, rnd(9, 15) - N*0.6); shake = 0.25; }
   }
-  if (whisperOn > 0) { whisperOn -= dt; if (whisperOn <= 0) { $('whisper').classList.remove('on'); $('turn').classList.remove('on'); } }
+  if (whisperOn > 0) { whisperOn -= dt; if (whisperOn <= 0) { $('whisper').classList.remove('on'); $('turn').classList.remove('on'); if (!whisperResolved) { whisperResolved = true; resisted++; addScore(75*N, 'RESISTED', '#9fd3d3'); if (resisted >= 5) unlock('resist'); } } }
   const bp = 1.25 - oud/100*0.8;
   if (oud > 25 && t - lastBeat > bp) { lastBeat = t; sfx.heart(clamp(oud/100, .25, 1)); }
   let near = null;
   for (const b of bangles) if (!b.taken && Math.abs(b.x - P.x) < 1.4) near = b;
-  $('hint').textContent = near ? (touch ? 'Gold on the ground · TAKE?' : 'Gold on the ground · E to take') : '';
+  $('hint').textContent = near ? (touch ? 'Gold · TAKE?' : 'Gold · press E') : '';
   $('hint').classList.toggle('on', !!near);
   $('padTake').classList.toggle('show', !!near);
-  if (input.take && near) { near.taken = true; gold++; sfx.pickup(); oud = Math.min(100, oud+15); Her.cool = Math.min(Her.cool, 1.5); }
+  if (input.take && near) { near.taken = true; gold++; mult = 1 + gold; addScore(50*N*gold, 'GOLD x' + gold, '#e7c06a'); sfx.pickup(gold); oud = Math.min(100, oud+15); Her.cool = Math.min(Her.cool, 1.5); if (gold >= 5) unlock('greedy'); }
   input.take = false;
-  if (P.x >= L) return finish(gold > 0 ? 'marked' : seen ? 'seen' : 'morning');
+  if (P.x >= L) return clearNight();
+  // hud
   $('prog').style.width = (P.x/L*100)+'%'; $('dot').style.left = (P.x/L*100)+'%';
   $('oudBar').style.width = oud+'%'; $('stamBar').style.width = (P.stam*100)+'%';
   $('goldCount').textContent = 'Gold ' + gold;
-  if (shake > 0) shake -= dt;
+  $('scoreVal').textContent = fmt(score); $('nightLbl').textContent = 'Night ' + night; $('multLbl').textContent = gold ? 'gold x' + gold : '';
 }
-function finish(kind){
-  state = 'end';
-  const key = kind === 'looked' ? 'taken' : kind, e = E[kind];
-  if (!got.includes(key)) got.push(key);
-  const secs = (performance.now() - startT)/1000, won = kind !== 'taken' && kind !== 'looked';
-  if (won && (!best || secs < best)) best = Math.round(secs*10)/10;
-  save();
-  sfx.boom(won ? 0.4 : 1); flash = won ? 0.3 : 1; shake = won ? 0 : 0.6; fadeAmb(won ? 0.3 : 0.12);
-  $('whisper').classList.remove('on'); $('turn').classList.remove('on'); $('hint').classList.remove('on');
-  ['padWalk','padRun','padTake'].forEach(id => $(id).classList.remove('show'));
-  $('hud').classList.remove('on');
-  $('endBg').style.backgroundImage = `url(img/${e.img}.jpg)`; $('endBg').style.backgroundPosition = (e.pos||'50%')+' center';
-  $('endNo').textContent = `Ending ${e.n} of 4 · ${e.name}`;
-  $('endTitle').textContent = e.title; $('endText').textContent = e.t;
-  dots($('found1'));
-  $('endStats').textContent = (won ? `Home in ${secs.toFixed(1)}s` : `You made it ${Math.round(P.x)} of ${L} metres`) + (gold ? ` · ${gold} gold` : '') + (best ? ` · Best ${best}s` : '') + ` · Endings ${got.length}/4`;
-  setTimeout(() => { $('end').classList.add('on'); $('legal').style.display = 'block'; }, won ? 600 : 1100);
+function hideInPlay(){ $('whisper').classList.remove('on'); $('turn').classList.remove('on'); $('hint').classList.remove('on'); ['padTake'].forEach(id => $(id).classList.remove('show')); }
+function clearNight(){
+  hideInPlay(); sfx.clear();
+  const par = L / 3.2, fast = Math.max(0, Math.round((par - nightT) * 25 * night));
+  const bonus = 500 * night;
+  score += bonus + fast;
+  if (night >= 3) unlock('night3'); if (night >= 5) unlock('night5'); if (night >= 10) unlock('night10');
+  if (gold === 0) unlock('pure'); if (nightT < 40) unlock('sprint');
+  const tally = `Night bonus  +${fmt(bonus)}\n${fast ? 'Speed bonus  +' + fmt(fast) + '\n' : ''}Score  ${fmt(score)}`;
+  state = 'card';
+  showCard('Night ' + night + ' survived', 'MORNING', gold ? `You made it home with ${gold} of her bangles.` : 'You never looked back.', tally, 2.8, () => {
+    night++; resetNight(); state = 'card';
+    showCard('Night ' + night, '2:14 AM', NIGHT_SUBS[Math.min(night, NIGHT_SUBS.length-1)] || 'She is waiting.', '', 2.0, null);
+  });
 }
+function die(kind){
+  if (state !== 'play') return;
+  state = 'dead'; deathCause = kind;
+  hideInPlay(); ['padWalk','padRun'].forEach(id => $(id).classList.remove('show'));
+  sfx.boom(1); flash = 1; shake = 0.6; fadeAmb(0.15);
+  $('hud').classList.remove('on'); $('score').classList.remove('on');
+  const isBest = score > bestScore;
+  if (isBest) { bestScore = score; store.set('fm_dlb_best_score', bestScore); }
+  if (night > bestNight) { bestNight = night; store.set('fm_dlb_best_night', bestNight); }
+  updateBestLine();
+  $('endBg').style.backgroundImage = 'url(img/end_taken.jpg)'; $('endBg').style.backgroundPosition = '45% center';
+  $('endNo').textContent = (kind === 'looked' ? 'You turned around' : 'She caught you') + ' · night ' + night;
+  $('endTitle').textContent = 'TAKEN';
+  $('endScore').textContent = fmt(score);
+  $('endStats').textContent = `${night - 1} ${night - 1 === 1 ? 'night' : 'nights'} survived · ${Math.round(P.x)} m into night ${night} · best ${fmt(bestScore)}`;
+  $('newBest').innerHTML = isBest && score > 0 ? '<span class="newbest">New personal best</span>' : '';
+  $('ach').innerHTML = ACH.map(a => `<span class="${achGot.includes(a[0])?'got':''}">${a[1]}</span>`).join('');
+  lastRun = { score: Math.round(score), night, dur: Math.round(runT), submitted: false };
+  $('name').value = myName;
+  $('submit').style.display = score > 0 ? 'flex' : 'none';
+  board($('board1'), true);
+  setTimeout(() => { $('end').classList.add('on'); $('legal').style.display = 'block'; }, 1000);
+}
+
+/* leaderboard */
+let lastRun = null, cache = null;
+const clean = s => (s||'').replace(/[^\p{L}\p{N} _.\-]/gu, '').trim().slice(0, 14);
+async function fetchBoard(){
+  if (LB_URL) { try { const r = await fetch(LB_URL + '?a=top', {cache:'no-store'}); const j = await r.json(); if (j && j.top) { cache = j.top; return {list: j.top, global: true}; } } catch(e){} }
+  return {list: store.get('fm_dlb_local', []), global: false};
+}
+function renderBoard(el, list, global, me){
+  if (!list.length) { el.innerHTML = '<h3>Leaderboard</h3><p class="note">No scores yet. Be the first.</p>'; return; }
+  el.innerHTML = `<h3>${global ? 'Top survivors · worldwide' : 'Your best runs · this device'}</h3><ol>` + list.slice(0, 20).map((r,i) => `<li class="${me && r.id === me ? 'me' : ''}"><span class="r">${i+1}</span><span>${(r.name||'Anonymous').replace(/</g,'&lt;')}</span><span class="ni">N${r.night}</span><span class="s">${fmt(r.score)}</span></li>`).join('') + '</ol>' + (global ? '' : '<p class="note">Worldwide leaderboard coming soon.</p>');
+}
+async function board(el, show){ el.style.display = show ? 'block' : el.style.display; el.innerHTML = '<p class="note">Loading…</p>'; const b = await fetchBoard(); renderBoard(el, b.list, b.global); }
+$('showBoard').onclick = () => { const el = $('board0'); if (el.style.display === 'none') { el.style.display = 'block'; board(el, true); } else el.style.display = 'none'; };
+$('submit').addEventListener('submit', async e => {
+  e.preventDefault(); if (!lastRun || lastRun.submitted) return;
+  const name = clean($('name').value) || 'Anonymous'; myName = name; store.set('fm_dlb_name', name);
+  const id = Math.random().toString(36).slice(2, 10);
+  const entry = { id, name, score: lastRun.score, night: lastRun.night, dur: lastRun.dur, ts: Date.now() };
+  lastRun.submitted = true; $('submit').style.display = 'none';
+  const local = store.get('fm_dlb_local', []); local.push(entry); local.sort((a,b) => b.score - a.score); store.set('fm_dlb_local', local.slice(0, 20));
+  if (LB_URL) { try { await fetch(LB_URL, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(entry) }); } catch(e){} }
+  const b = await fetchBoard(); renderBoard($('board1'), b.list, b.global, id);
+});
 
 /* drawing */
 const sx = x => (x - cam) * S + W*0.36;
@@ -438,15 +560,17 @@ function home(x, y){
 
 /* flow */
 function begin(){
-  audio(); if (soundOn) { amb.play().catch(()=>{}); fadeAmb(0.45, 2500); }
-  reset(); state = 'play';
+  audio(); if (soundOn) { amb.play().catch(()=>{}); fadeAmb(0.45, 2000); }
+  newRun();
   $('intro').classList.remove('on'); $('end').classList.remove('on'); $('legal').style.display = 'none';
-  $('hud').classList.add('on'); ['padWalk','padRun'].forEach(id => $(id).classList.add('show'));
-  whisper(touch ? 'Hold WALK. Stay in the light.' : 'Hold → to walk. Stay in the light.', 3.2);
+  $('hud').classList.add('on'); $('score').classList.add('on'); ['padWalk','padRun'].forEach(id => $(id).classList.add('show'));
+  $('scoreVal').textContent = '0'; $('nightLbl').textContent = 'Night 1'; $('multLbl').textContent = '';
+  state = 'card';
+  showCard('Night 1', '2:14 AM', touch ? 'Hold WALK. Stay in the light.' : 'Hold → to walk. Stay in the light.', '', 2.2, null);
 }
 $('start').onclick = begin; $('again').onclick = begin;
-$('share').onclick = async () => { const d = {title:"Don't Look Back", text:`I found ${got.length} of 4 endings in Don't Look Back. Can you make it home?`, url: location.href.split('#')[0]}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(d.url); $('share').textContent = 'Link copied'; } } catch(e){} };
-window.__fm = { get P(){return P;}, get Her(){return Her;}, get oud(){return oud;}, get state(){return state;}, get gold(){return gold;}, get lit(){return lightAt(P.x,t);} };
+$('share').onclick = async () => { const d = {title:"Don't Look Back", text:`I survived ${Math.max(0,(lastRun?lastRun.night:1)-1)} nights and scored ${fmt(lastRun?lastRun.score:0)} in Don't Look Back. Can you beat me?`, url: 'https://fablemare.com/follow/'}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(d.text + ' ' + d.url); $('share').textContent = 'Copied'; } } catch(e){} };
+window.__fm = { get P(){return P;}, get Her(){return Her;}, get oud(){return oud;}, get state(){return state;}, get gold(){return gold;}, get lit(){return lightAt(P.x,t);}, get night(){return night;}, get score(){return score;} };
 requestAnimationFrame(frame);
 })();
 </script>
