@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Would You Follow Her? — An Umm Al Duwais story | Fablemare</title>
+<meta name="description" content="2:14 AM. The smell of oud. A woman under a streetlamp. An interactive horror story with 4 endings, based on the Emirati legend of Umm Al Duwais.">
+<meta property="og:title" content="Would You Follow Her? — Fablemare">
+<meta property="og:description" content="An interactive horror story with 4 endings. How many can you find?">
+<meta property="og:image" content="https://fablemare.com/follow/img/woman.jpg">
+<meta name="theme-color" content="#08090b">
+<link rel="icon" href="../favicon.png">
+<link rel="preload" href="../cardo.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:Cardo;src:url(../cardo.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Cardo;src:url(../cardo-bold.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:Cardo;src:url(../cardo-italic.woff2) format('woff2');font-style:italic;font-display:swap}
+:root{--bg:#08090b;--ink:#efe6d2;--muted:#a3998a;--gold:#c9a45c;--teal:#7fb3b3}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Cardo,Georgia,serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;color:inherit}
+.top{position:fixed;inset:0 0 auto 0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:16px 5vw;pointer-events:none}
+.top a,.top button{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;letter-spacing:.2em;font-size:.9rem}
+.brand img{width:32px;height:32px;border-radius:50%;box-shadow:0 0 0 1px rgba(201,164,92,.4)}
+.sound{background:none;border:1px solid rgba(201,164,92,.4);border-radius:30px;padding:6px 14px;font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+.sound:hover{color:var(--ink);border-color:var(--gold)}
+
+.stage{position:fixed;inset:0;display:grid;grid-template-rows:minmax(0,1fr) auto}
+.scene{position:relative;overflow:hidden}
+.scene .img{position:absolute;inset:-3%;background-size:cover;background-position:center;opacity:0;transition:opacity 1.4s ease;animation:kb 24s ease-in-out infinite alternate}
+.scene .img.on{opacity:1}
+@keyframes kb{from{transform:scale(1.08) translate(-1%,0)}to{transform:scale(1) translate(1%,-1%)}}
+.scene .lamp{position:absolute;inset:0;pointer-events:none;--x:50%;--y:45%;background:radial-gradient(circle 340px at var(--x) var(--y),rgba(255,190,110,.08),rgba(8,9,11,0) 40%,rgba(8,9,11,.55) 75%,rgba(8,9,11,.85))}
+.scene::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(180deg,rgba(8,9,11,0),var(--bg));pointer-events:none}
+.scene.shake{animation:shake .5s}
+@keyframes shake{20%{transform:translate(-6px,2px)}40%{transform:translate(5px,-3px)}60%{transform:translate(-4px,3px)}80%{transform:translate(3px,-1px)}}
+
+.panel{position:relative;max-width:760px;width:100%;margin:-18vh auto 0;padding:0 6vw calc(28px + env(safe-area-inset-bottom));z-index:5}
+.text{font-size:clamp(1.12rem,2.3vw,1.4rem);line-height:1.6;min-height:5.2em;text-shadow:0 1px 12px rgba(0,0,0,.9)}
+.text .whisper{color:var(--gold);font-style:italic}
+.choices{display:flex;flex-direction:column;gap:12px;margin-top:22px}
+.choice{position:relative;overflow:hidden;z-index:0;text-align:left;padding:14px 20px;background:rgba(8,9,11,.55);border:1px solid rgba(201,164,92,.45);cursor:pointer;font-size:1.02rem;letter-spacing:.02em;opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s,color .35s,border-color .35s;backdrop-filter:blur(4px)}
+.choice.in{opacity:1;transform:none}
+.choice::before{content:"";position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .45s cubic-bezier(.2,.7,.2,1);z-index:-1}
+.choice:hover,.choice:focus-visible{color:#0b0b0b;border-color:var(--gold);outline:none}
+.choice:hover::before,.choice:focus-visible::before{transform:none}
+.choice .k{display:inline-block;width:1.6em;color:var(--gold);transition:color .35s}
+.choice:hover .k,.choice:focus-visible .k{color:#0b0b0b}
+
+/* intro & ending overlays */
+.overlay{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;text-align:center;padding:90px 7vw 40px;background:radial-gradient(ellipse at center,rgba(8,9,11,.55),rgba(8,9,11,.96) 70%);opacity:0;pointer-events:none;transition:opacity 1.2s}
+.overlay.on{opacity:1;pointer-events:auto}
+#intro{background:radial-gradient(ellipse at center,rgba(8,9,11,.35),rgba(8,9,11,.88) 75%)}
+.overlay .inner{max-width:640px}
+.eyebrow{letter-spacing:.38em;text-transform:uppercase;font-size:.72rem;color:var(--teal);margin:0 0 16px}
+.overlay h1,.overlay h2{margin:0;font-weight:700;letter-spacing:.08em;line-height:1.05;font-size:clamp(2.4rem,7vw,4.6rem);color:#f3e6c8;text-shadow:0 0 30px rgba(255,186,100,.3)}
+.overlay h2{letter-spacing:.3em;margin-right:-.3em}
+.overlay p{color:#d3c9b6;font-size:1.12rem;line-height:1.65}
+.overlay .meta{color:var(--muted);font-size:.9rem;letter-spacing:.06em}
+.btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:30px}
+.btn{position:relative;overflow:hidden;z-index:0;display:inline-block;padding:13px 30px;border:1px solid var(--gold);background:rgba(8,9,11,.4);color:var(--ink);text-decoration:none;letter-spacing:.18em;text-transform:uppercase;font-size:.78rem;cursor:pointer}
+.btn::before{content:"";position:absolute;inset:0;background:var(--gold);transform:translateY(101%);transition:transform .45s cubic-bezier(.2,.7,.2,1);z-index:-1}
+.btn:hover{color:#0b0b0b}.btn:hover::before{transform:none}
+.btn.ghost{border-color:rgba(201,164,92,.35);color:var(--muted)}
+.found{display:flex;gap:10px;justify-content:center;margin:22px 0 4px}
+.found span{width:46px;height:3px;background:#2a2d33}
+.found span.got{background:var(--gold);box-shadow:0 0 10px rgba(201,164,92,.6)}
+.ending-bg{position:fixed;inset:0;z-index:9;pointer-events:none;background-size:cover;background-position:center;opacity:0;transition:opacity 1.6s;filter:brightness(.55) saturate(.9)}
+.ending-bg.on{opacity:1}
+.flash{position:fixed;inset:0;z-index:30;background:#fff;opacity:0;pointer-events:none}
+.flash.go{animation:flash .9s ease-out}
+@keyframes flash{0%{opacity:.0}8%{opacity:.85}100%{opacity:0}}
+.grain{position:fixed;inset:-50%;z-index:40;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1s steps(6) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(3%,3%)}}
+.legal{position:fixed;bottom:10px;left:0;right:0;text-align:center;font-size:.72rem;color:#5d5a54;z-index:11;pointer-events:none}
+@media (max-width:640px){
+ .panel{margin-top:-14vh}
+ .text{min-height:6.4em}
+ .choice{padding:13px 16px}
+ .brand span{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.choice{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="brand" href="/"><img src="../logo.png" alt="Fablemare"><span>FABLEMARE</span></a>
+  <button class="sound" id="sound" aria-pressed="true">Sound on</button>
+</div>
+
+<div class="stage">
+  <div class="scene" id="scene"><div class="img" id="imgA"></div><div class="img" id="imgB"></div><div class="lamp" id="lamp"></div></div>
+  <div class="panel">
+    <div class="text" id="text" aria-live="polite"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+</div>
+
+<div class="ending-bg" id="endbg"></div>
+
+<div class="overlay on" id="intro">
+  <div class="inner">
+    <p class="eyebrow">An interactive Umm Al Duwais story</p>
+    <h1>Would You<br>Follow Her?</h1>
+    <p>It's 2:14 AM. You're walking home alone. Somewhere close, someone is burning oud.<br>Every choice matters. There are four endings.</p>
+    <div class="found" id="found0"></div>
+    <p class="meta">Best with sound on 🎧 &nbsp;·&nbsp; about 2 minutes</p>
+    <div class="btns"><button class="btn" id="begin">Begin</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ending">
+  <div class="inner">
+    <p class="eyebrow" id="endNo"></p>
+    <h2 id="endTitle"></h2>
+    <p id="endText"></p>
+    <div class="found" id="found1"></div>
+    <p class="meta" id="endCount"></p>
+    <div class="btns">
+      <button class="btn" id="again">Play again</button>
+      <a class="btn" id="watch" href="https://www.youtube.com/@Fablemare">Watch the full legend</a>
+      <button class="btn ghost" id="share">Share</button>
+    </div>
+  </div>
+</div>
+<div class="flash" id="flash"></div>
+<p class="legal">An original story based on an old Emirati legend · <a href="/privacy.html" style="color:inherit;pointer-events:auto">Privacy</a></p>
+
+<script>
+(() => {
+const S = {
+  start:{img:'start',p:'28%',t:"2:14 AM. Your shift ran late, and the last bus left an hour ago. Home is twenty minutes away on foot.",c:[["Walk along the corniche","corniche"],["Cut through the old alleys","alley"]]},
+  corniche:{img:'corniche',p:'38%',t:"Wet stone. Palm shadows. The sea breathes beside you, slow and heavy. Then, out of nowhere… oud. Thick and sweet, as if someone just walked past you. But there's no one here.",c:[["Keep walking. Don't think about it.","bangle"],["Find where the smell is coming from","woman"]],beat:1},
+  alley:{img:'alley',t:"Coral-stone walls lean in close. One lamp flickers. Behind you, footsteps begin. They match yours. Exactly.",c:[["Stop and turn around","shadow"],["Walk faster","footsteps"]],beat:1},
+  footsteps:{img:'footsteps',p:'40%',t:"You walk faster. The footsteps walk faster. You stop. They stop… one step too late. The smell of oud rolls over your shoulder.",c:[["Run for the main road","run"],["Turn around","E:taken"]],beat:2},
+  shadow:{img:'shadow',p:'45%',t:"No one is there. But on the wall beside you is a shadow. A woman. Tall, veiled, perfectly still. The alley is empty.",c:[["Run for the main road","run"],["Follow the shadow","woman"]],beat:2,shake:1},
+  run:{img:'run',t:"You run until your lungs burn. Streetlights. A taxi. A man at a karak stall looks up, startled. You made it out. You don't look back.",c:[["Keep going","E:survived"]]},
+  woman:{img:'woman',p:'62%',t:"Under the last streetlamp stands a woman. Beautiful. Alone. Gold at her wrists. She smiles at you as if she has been waiting… then turns and walks slowly into the dark, looking back once.",c:[["Follow her","follow"],["Stay where you are","behind"]],beat:1},
+  follow:{img:'follow',p:'72%',t:"You follow. She never hurries, yet you never get any closer. Her bangles chime. And under the chime, another sound… metal, scraping on stone.",c:[["Look down at her feet","E:seen"],["Keep your eyes on her face","E:taken"]],beat:2},
+  behind:{img:'behind',p:'45%',t:"You don't move. The chiming stops. The oud grows so thick it stings your eyes. Then a whisper, right at your ear: <span class='whisper'>“Aren't you coming?”</span>",c:[["Turn around","E:taken"],["Close your eyes and walk away","E:survived"]],beat:2,shake:1},
+  bangle:{img:'bangle',t:"Ahead, something glints on the pavement. A single gold bangle. Old. Beautiful. Still warm.",c:[["Pick it up","E:marked"],["Leave it where it is","empty"]]},
+  empty:{img:'empty',t:"You step around it. Ten steps. Twenty. Behind you, a soft voice: <span class='whisper'>“You dropped something.”</span>",c:[["Turn around","E:taken"],["Keep walking","E:survived"]],beat:2}
+};
+const E = {
+  taken:{n:1,img:'end_taken',p:'45%',title:'TAKEN',name:'The Follower',t:"You look into her eyes, and suddenly you understand every story your grandmother ever told you. No one hears anything on the corniche at 2 AM. In the morning, all that's left is the smell of oud."},
+  survived:{n:2,img:'end_survived',title:'MORNING',name:'The One Who Never Looked Back',t:"You reach home as the sky turns gold. Your hands won't stop shaking. You never walk that way at night again. Smart. The ones who survive her are the ones who never look back."},
+  marked:{n:3,img:'end_marked',title:'MARKED',name:'The Keeper of Her Gold',t:"You slip the bangle into your pocket and get home safe. That's the trick. She doesn't need to catch you tonight. Tomorrow night, you'll smell oud at your window. Because you have something of hers."},
+  seen:{n:4,img:'end_seen',p:'40%',title:'SEEN',name:'The Witness',t:"Under the hem of her long black robe there are no feet. Only two curved blades, scraping the stone. She knows you saw. She smiles… and lets you go. They say she always spares one, so the story gets told."}
+};
+const $ = id => document.getElementById(id);
+const imgs = [$('imgA'),$('imgB')]; let cur = 0;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const all = [...new Set([...Object.values(S).map(s=>s.img),...Object.values(E).map(e=>e.img)])];
+all.forEach(k=>{const i=new Image();i.src='img/'+k+'.jpg';});
+
+// saved endings (this device only)
+let got = [];
+try { got = JSON.parse(localStorage.getItem('fm_follow_endings')||'[]'); } catch(e) {}
+const save = () => { try { localStorage.setItem('fm_follow_endings', JSON.stringify(got)); } catch(e) {} };
+const dots = el => { el.innerHTML = Object.keys(E).map(k=>`<span class="${got.includes(k)?'got':''}" title="${got.includes(k)?E[k].name:'???'}"></span>`).join(''); };
+dots($('found0'));
+imgs[0].style.backgroundImage='url(img/woman.jpg)'; imgs[0].style.backgroundPosition='62% center'; imgs[0].classList.add('on');
+
+// audio
+let soundOn = true, ctx, amb = new Audio('ambience.mp3'); amb.loop = true; amb.volume = 0;
+function ac(){ if(!ctx){ try{ ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return ctx; }
+function fadeAmb(to,ms=1500){ const from=amb.volume, t0=performance.now(); (function f(t){ const k=Math.min(1,(t-t0)/ms); amb.volume=Math.max(0,Math.min(1,from+(to-from)*k)); if(k<1) requestAnimationFrame(f); })(t0); }
+function boom(gain=0.9){ const c=ac(); if(!c||!soundOn) return; const o=c.createOscillator(), g=c.createGain(); o.type='sine'; o.frequency.setValueAtTime(90,c.currentTime); o.frequency.exponentialRampToValueAtTime(28,c.currentTime+1.6); g.gain.setValueAtTime(gain,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+2.2); o.connect(g).connect(c.destination); o.start(); o.stop(c.currentTime+2.3);
+  const n=c.createBuffer(1,c.sampleRate*1.2,c.sampleRate), d=n.getChannelData(0); let l=0; for(let i=0;i<d.length;i++){ l=(l+0.02*(Math.random()*2-1))/1.02; d[i]=l*3.5*(1-i/d.length); } const s=c.createBufferSource(), sg=c.createGain(); sg.gain.value=gain*0.8; s.buffer=n; s.connect(sg).connect(c.destination); s.start(); }
+function beat(n=3,rate=1){ const c=ac(); if(!c||!soundOn) return; for(let i=0;i<n;i++){ [0,0.22].forEach((off,j)=>{ const t=c.currentTime+i*0.9/rate+off, o=c.createOscillator(), g=c.createGain(); o.frequency.value=j?44:50; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(j?0.35:0.55,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+0.25); o.connect(g).connect(c.destination); o.start(t); o.stop(t+0.3); }); } }
+$('sound').onclick = () => { soundOn=!soundOn; $('sound').textContent = soundOn?'Sound on':'Sound off'; $('sound').setAttribute('aria-pressed',soundOn); soundOn? (amb.play().catch(()=>{}), fadeAmb(0.55)) : fadeAmb(0,400); };
+
+// lantern follows pointer, drifts when idle
+const scene=$('scene'), lamp=$('lamp'); let tx=.5,ty=.45,lx=.5,ly=.45,last=0;
+scene.addEventListener('pointermove',e=>{const r=scene.getBoundingClientRect(); tx=(e.clientX-r.left)/r.width; ty=(e.clientY-r.top)/r.height; last=performance.now();},{passive:true});
+(function loop(t){ if(t-last>2500){ tx=.5+Math.sin(t/3300)*.22; ty=.42+Math.sin(t/2400)*.08; } lx+=(tx-lx)*.06; ly+=(ty-ly)*.06; lamp.style.setProperty('--x',(lx*100)+'%'); lamp.style.setProperty('--y',(ly*100)+'%'); requestAnimationFrame(loop); })(0);
+
+let typing=null;
+function show(id){
+  const s=S[id];
+  const nxt=imgs[1-cur]; nxt.style.backgroundImage=`url(img/${s.img}.jpg)`; nxt.style.backgroundPosition=(s.p||'50%')+' center'; nxt.classList.add('on'); imgs[cur].classList.remove('on'); cur=1-cur;
+  if(s.shake && !reduce){ scene.classList.remove('shake'); void scene.offsetWidth; scene.classList.add('shake'); }
+  if(s.beat) beat(s.beat===2?4:2, s.beat===2?1.4:1);
+  const box=$('choices'); box.innerHTML='';
+  const el=$('text'); clearInterval(typing);
+  const finish=()=>{ el.innerHTML=s.t; s.c.forEach(([label,to],i)=>{ const b=document.createElement('button'); b.className='choice'; b.innerHTML=`<span class="k">${i+1}</span>${label}`; b.onclick=()=>go(to); box.appendChild(b); setTimeout(()=>b.classList.add('in'),120+i*160); }); };
+  if(reduce){ finish(); return; }
+  const plain=s.t.replace(/<[^>]+>/g,''); let i=0; el.textContent='';
+  typing=setInterval(()=>{ i+=2; el.textContent=plain.slice(0,i); if(i>=plain.length){ clearInterval(typing); finish(); } },22);
+  el.onclick=()=>{ if(i<plain.length){ clearInterval(typing); i=plain.length; finish(); } };
+}
+function go(to){
+  if(to.startsWith('E:')) return ending(to.slice(2));
+  show(to);
+}
+function ending(k){
+  const e=E[k];
+  if(!got.includes(k)){ got.push(k); save(); }
+  if(!reduce){ $('flash').classList.remove('go'); void $('flash').offsetWidth; $('flash').classList.add('go'); }
+  boom(k==='survived'?0.35:0.95); fadeAmb(k==='survived'?0.3:0.15,1200);
+  $('endbg').style.backgroundImage=`url(img/${e.img}.jpg)`; $('endbg').style.backgroundPosition=(e.p||'50%')+' center'; $('endbg').classList.add('on');
+  $('endNo').textContent=`Ending ${e.n} of 4 · ${e.name}`;
+  $('endTitle').textContent=e.title; $('endText').textContent=e.t;
+  dots($('found1'));
+  $('endCount').textContent = got.length===4 ? 'You found every ending. She remembers you now.' : `Endings found: ${got.length} of 4. Can you find the rest?`;
+  setTimeout(()=>$('ending').classList.add('on'), reduce?0:700);
+}
+$('begin').onclick=()=>{ ac(); if(ctx&&ctx.state==='suspended') ctx.resume(); if(soundOn){ amb.play().catch(()=>{}); fadeAmb(0.55,3000);} $('intro').classList.remove('on'); document.querySelector('.legal').style.display='none'; show('start'); };
+$('again').onclick=()=>{ $('ending').classList.remove('on'); $('endbg').classList.remove('on'); fadeAmb(soundOn?0.55:0); show('start'); };
+$('share').onclick=async()=>{ const d={title:'Would You Follow Her?',text:'I found '+got.length+' of 4 endings. Would you follow her?',url:location.href.split('#')[0]}; try{ if(navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(d.url); $('share').textContent='Link copied'; } }catch(e){} };
+document.addEventListener('keydown',e=>{ const n=parseInt(e.key,10); if(n>0){ const b=$('choices').children[n-1]; if(b && !$('ending').classList.contains('on')) b.click(); } });
+const g=document.createElement('div'); g.className='grain'; document.body.appendChild(g);
+})();
+</script>
+</body>
+</html>
