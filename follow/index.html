@@ -77,6 +77,7 @@ button{font:inherit;color:inherit}
 .stats{color:var(--muted);font-size:.88rem;letter-spacing:.06em}
 .legal{position:fixed;bottom:8px;left:0;right:0;text-align:center;font-size:.7rem;color:#5d5a54;z-index:31}
 .legal a{color:inherit}
+body:has(#end.on) .legal{display:none}
 @media (max-width:640px){.rules{grid-template-columns:1fr}.brand span{display:none}.bar{width:56px}.meters{letter-spacing:.12em}}
 .score{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:21;text-align:center;pointer-events:none;display:none}
 .score.on{display:block}
@@ -90,12 +91,44 @@ button{font:inherit;color:inherit}
 .card .sub{color:#d6ccb9;font-style:italic;font-size:1.1rem;margin-top:6px;padding:0 6vw}
 .card .tally{margin-top:16px;font-size:.9rem;letter-spacing:.12em;color:var(--gold);white-space:pre-line;line-height:1.8}
 .big-score{font-size:clamp(3rem,10vw,5.5rem);font-weight:700;color:#f3e6c8;line-height:1;margin:10px 0 4px;text-shadow:0 0 30px rgba(255,186,100,.35)}
-.newbest{display:inline-block;margin-top:8px;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;animation:pulse2 1.2s ease-in-out infinite}
+.seal{position:relative;display:inline-flex;flex-direction:column;align-items:center;margin-top:18px;padding:16px 34px 12px;overflow:hidden;
+ background:radial-gradient(ellipse at 50% 0%,rgba(255,196,110,.28),rgba(201,164,92,.06) 60%,rgba(7,8,10,.4));border:1px solid rgba(231,192,106,.8);
+ box-shadow:0 0 30px rgba(255,180,90,.25),inset 0 0 20px rgba(255,190,110,.12);clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px)}
+.seal::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,240,210,.35) 50%,transparent 65%);transform:translateX(-120%);animation:sweep 2.8s ease-in-out infinite}
+@keyframes sweep{60%,100%{transform:translateX(120%)}}
+.seal .flame{position:absolute;top:5px;left:50%;width:8px;height:12px;margin-left:-4px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 50% 70%,#fff3c8,#ffb347 55%,rgba(255,120,40,0) 75%);filter:blur(.3px);animation:flick 1.3s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:scale(1) translateY(0);opacity:1}40%{transform:scale(.85,1.12) translateY(-1px);opacity:.85}70%{transform:scale(1.08,.92);opacity:.95}}
+.seal b{display:block;margin-top:8px;font-size:.78rem;letter-spacing:.42em;margin-right:-.42em;text-transform:uppercase;color:#ffe2a8;text-shadow:0 0 14px rgba(255,180,90,.7)}
+.seal small{display:block;margin-top:5px;color:#d9c29a;font-size:.86rem;letter-spacing:.04em;font-style:italic}
+.cta{position:relative;display:block;margin:26px auto 0;width:min(100%,380px);padding:18px 20px 14px;border:0;cursor:pointer;color:#120c05;
+ background:linear-gradient(180deg,#f2d494,#c9a45c 55%,#a9853f);box-shadow:0 0 0 1px rgba(255,230,170,.6),0 10px 40px -8px rgba(255,170,70,.55);animation:ember 2.2s ease-in-out infinite;
+ clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%)}
+.cta span{display:block;font-weight:700;font-size:1.15rem;letter-spacing:.38em;margin-right:-.38em;text-transform:uppercase}
+.cta small{display:block;margin-top:4px;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.cta:hover{filter:brightness(1.08)}
+@keyframes ember{50%{box-shadow:0 0 0 1px rgba(255,230,170,.9),0 12px 60px -6px rgba(255,170,70,.85)}}
+.medals-wrap{padding-bottom:30px;margin-top:28px}
+.medals-h{margin:0 0 12px!important;font-size:.68rem!important;letter-spacing:.38em;text-transform:uppercase;color:var(--teal)!important}
+.medals{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;max-width:520px;margin:0 auto}
+.medal{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.medal em{white-space:nowrap}
+.medal i{position:relative;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:1px solid #2b2e35;background:radial-gradient(circle at 50% 35%,#16181d,#0a0b0d);color:#3a3c42}
+.medal svg{width:26px;height:26px}
+.medal em{font-style:normal;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:#4c4a45;line-height:1.3;text-align:center}
+.medal.got i{color:#ffd88c;border-color:rgba(231,192,106,.85);background:radial-gradient(circle at 50% 35%,rgba(255,196,110,.28),#110d07 70%);box-shadow:0 0 18px rgba(255,180,90,.35),inset 0 0 10px rgba(255,190,110,.2)}
+.medal.got em{color:#d9c29a}
+.medal.new i{animation:popin .9s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes popin{from{transform:scale(.2);opacity:0}}
+@media (max-width:640px){.medals{grid-template-columns:repeat(4,1fr)}}
+.cardModal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(4,5,6,.88);backdrop-filter:blur(6px);padding:20px}
+.cardModal.on{display:flex}
+.cm-inner{text-align:center;max-width:460px;width:100%}
+.cm-inner img{width:100%;max-height:70vh;object-fit:contain;box-shadow:0 20px 70px rgba(0,0,0,.7),0 0 0 1px rgba(201,164,92,.35)}
 @keyframes pulse2{50%{box-shadow:0 0 22px rgba(201,164,92,.55)}}
 .submit{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
 .submit input{background:rgba(7,8,10,.6);border:1px solid rgba(201,164,92,.5);color:var(--ink);font:inherit;font-size:1rem;padding:11px 14px;width:200px;letter-spacing:.06em;outline:none;user-select:text;-webkit-user-select:text}
 .submit input:focus{border-color:var(--gold)}
-.board{margin:22px auto 0;max-width:420px;text-align:left;font-size:.95rem}
+.board{margin:30px auto 0;max-width:420px;text-align:left;font-size:.95rem}
 .board h3{margin:0 0 8px;font-weight:400;font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--teal);text-align:center}
 .board ol{list-style:none;margin:0;padding:0}
 .board li{display:grid;grid-template-columns:2.2em 1fr auto auto;gap:10px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.06);color:#d6ccb9}
@@ -105,9 +138,6 @@ button{font:inherit;color:inherit}
 .board li.me{background:rgba(201,164,92,.12);color:#f3e6c8}
 .board li:nth-child(1) .r{color:#e7c06a}.board li:nth-child(2) .r{color:#cfd6da}.board li:nth-child(3) .r{color:#c98a5a}
 .board .note{color:var(--muted);font-size:.78rem;text-align:center;margin-top:8px}
-.ach{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
-.ach span{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:4px 9px;border:1px solid #2a2d33;color:#55524c}
-.ach span.got{border-color:rgba(201,164,92,.6);color:var(--gold)}
 .close{color:#ffb36b;letter-spacing:.08em;margin:8px 0 0!important;font-size:1rem!important}
 .rankline{color:var(--gold)!important;font-size:.95rem!important;letter-spacing:.06em;margin:10px 0 0!important}
 .submit .note{flex-basis:100%;margin:6px 0 0;color:#ffb36b;font-size:.85rem}
@@ -177,17 +207,26 @@ button{font:inherit;color:inherit}
     <p class="rankline" id="rankLine"></p>
     <form class="submit" id="submit" style="display:none" autocomplete="off">
       <input id="name" maxlength="14" placeholder="Pick a name" aria-label="Your name for the leaderboard">
-      <button class="btn" type="submit">Join the leaderboard</button>
+      <button class="btn" type="submit" id="nameBtn">Join the leaderboard</button>
       <p class="note" id="nameMsg"></p>
     </form>
-    <div class="board" id="board1"></div>
-    <div class="ach" id="ach"></div>
+    <button class="cta" id="again"><span>Try again</span><small id="againSub">Press R · she is waiting</small></button>
     <div class="btns">
-      <button class="btn" id="again">Try again</button>
+      <button class="btn" id="share">Share my card</button>
       <a class="btn ghost" href="https://www.youtube.com/@Fablemare">Watch the legend</a>
-      <button class="btn ghost" id="share">Share</button>
     </div>
-    <p class="retry" id="retryHint">Press R to try again</p>
+    <div class="board" id="board1"></div>
+    <div class="medals-wrap"><p class="medals-h" id="achH">Relics found</p><div class="medals" id="ach"></div></div>
+  </div>
+</div>
+<div class="cardModal" id="cardModal" aria-hidden="true">
+  <div class="cm-inner">
+    <img id="cardImg" alt="Your Don't Look Back share card">
+    <div class="btns">
+      <button class="btn" id="cardShare">Share</button>
+      <a class="btn ghost" id="cardSave" download="dont-look-back.png">Save image</a>
+      <button class="btn ghost" id="cardClose">Close</button>
+    </div>
   </div>
 </div>
 <p class="legal" id="legal">An original game based on an old Emirati legend · <a href="/privacy.html">Privacy</a></p>
@@ -207,7 +246,7 @@ const rr = (a,b) => a + R()*(b-a);
 const $ = id => document.getElementById(id);
 const cv = $('cv'), cx = cv.getContext('2d');
 const touch = matchMedia('(pointer: coarse)').matches;
-if (touch) { document.body.classList.add('touch'); $('keys').textContent = 'Hold WALK or RUN · tap TAKE to pick up gold' + (innerHeight > innerWidth ? ' · best in landscape' : ''); $('retryHint').textContent = ''; }
+if (touch) { document.body.classList.add('touch'); $('keys').textContent = 'Hold WALK or RUN · tap TAKE to pick up gold' + (innerHeight > innerWidth ? ' · best in landscape' : ''); }
 let W, H, DPR, S;
 function resize(){ DPR = Math.min(devicePixelRatio||1, 2); W = innerWidth; H = innerHeight; cv.width = W*DPR; cv.height = H*DPR; cx.setTransform(DPR,0,0,DPR,0,0); S = Math.min(H/11, W/8.5); }
 addEventListener('resize', resize); resize();
@@ -222,7 +261,18 @@ const ACH = [
   ['night3','Survive night 3'],['night5','Survive night 5'],['night10','Survive night 10'],
   ['close','Close call'],['greedy','5 gold in one night'],['pure','A night with no gold'],['resist','Resist her 5 times'],['sprint','Night under 40s']
 ];
-function unlock(k){ if (!achGot.includes(k)) { achGot.push(k); store.set('fm_dlb_ach', achGot); popup('★ ' + ACH.find(a=>a[0]===k)[1], '#e7c06a', 1.6); } }
+let runAch = [], runGold = 0;
+function unlock(k){ if (!achGot.includes(k)) { achGot.push(k); runAch.push(k); store.set('fm_dlb_ach', achGot); popup('✦ ' + ACH.find(a=>a[0]===k)[1], '#e7c06a', 1.6); } }
+const MOON = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15.5 3.2a8.8 8.8 0 1 0 5.3 15.6A7.2 7.2 0 0 1 15.5 3.2z"/><text x="11" y="16" font-size="7" fill="currentColor" stroke="none" text-anchor="middle" font-family="Cardo,serif">${n}</text></svg>`;
+const ICON = {
+  night3: MOON(3), night5: MOON(5), night10: MOON(10),
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>',
+  greedy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="9" cy="13" rx="6" ry="3.4"/><ellipse cx="15" cy="11" rx="6" ry="3.4"/><path d="M15 5.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor"/></svg>',
+  pure: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="9" y="11" width="6" height="10" rx="1"/><path d="M12 11V9"/><path d="M12 3.5c1.6 1.8 2 3 0 5-2-2-1.6-3.2 0-5z" fill="currentColor"/></svg>',
+  resist: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 12c2-3 5-4 8-2 3-2 6-1 8 2-2 3-5 4-8 4s-6-1-8-4z"/><path d="M4 12h16"/><path d="M3 4l18 16"/></svg>',
+  sprint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 8h9M2 12h12M3 16h9"/><path d="M15 6l6 6-6 6"/></svg>'
+};
+const SHORT = {night3:'Night 3', night5:'Night 5', night10:'Night 10', close:'Close call', greedy:'Gold ×5', pure:'No gold', resist:'Resisted ×5', sprint:'Under 40s'};
 function updateBestLine(){ $('bestLine').textContent = bestScore ? `Your best: ${fmt(bestScore)} · night ${bestNight} · ${titleFor(bestNight)}` : ''; }
 updateBestLine();
 ['end_taken'].forEach(k => { const i = new Image(); i.src = 'img/'+k+'.jpg'; });
@@ -291,7 +341,7 @@ function resetNight(){
   gold = 0; oud = 0; nextWhisper = rnd(5,8); whisperOn = 0; whisperResolved = true; shake = 0; cam = P.x; lastStep = 0; nightT = 0; distScored = 0; mult = 1; closeArmed = false; nightScore = 0;
 }
 let combo = 1, lastBonusT = -99, bestCombo = 1;
-function newRun(){ runSeed = dubaiDay(); night = 1; score = 0; runT = 0; seen = false; resisted = 0; popups = []; combo = 1; lastBonusT = -99; bestCombo = 1; nightsLog = []; resetNight(); }
+function newRun(){ runAch = []; runGold = 0; runSeed = dubaiDay(); night = 1; score = 0; runT = 0; seen = false; resisted = 0; popups = []; combo = 1; lastBonusT = -99; bestCombo = 1; nightsLog = []; resetNight(); }
 let nightsLog = [];
 newRun();
 
@@ -392,7 +442,7 @@ function update(dt){
   $('hint').textContent = near ? (touch ? 'Gold · TAKE?' : 'Gold · press E') : '';
   $('hint').classList.toggle('on', !!near);
   $('padTake').classList.toggle('show', !!near);
-  if (input.take && near) { near.taken = true; gold++; mult = 1 + gold; addScore(50*N*gold, 'GOLD ' + gold, '#e7c06a', true); buzz(25); sfx.pickup(gold); oud = Math.min(100, oud+15); Her.cool = Math.min(Her.cool, 1.5); if (gold >= 5) unlock('greedy'); }
+  if (input.take && near) { near.taken = true; gold++; runGold++; mult = 1 + gold; addScore(50*N*gold, 'GOLD ' + gold, '#e7c06a', true); buzz(25); sfx.pickup(gold); oud = Math.min(100, oud+15); Her.cool = Math.min(Her.cool, 1.5); if (gold >= 5) unlock('greedy'); }
   input.take = false;
   if (P.x >= L) return clearNight();
   // hud
@@ -423,7 +473,7 @@ function die(kind){
   hideInPlay(); ['padWalk','padRun'].forEach(id => $(id).classList.remove('show'));
   sfx.boom(1); flash = 1; shake = 0.6; fadeAmb(0.15);
   $('hud').classList.remove('on'); $('score').classList.remove('on');
-  const isBest = score > bestScore;
+  const prevBest = bestScore, isBest = score > bestScore;
   if (isBest) { bestScore = score; store.set('fm_dlb_best_score', bestScore); }
   if (night > bestNight) { bestNight = night; store.set('fm_dlb_best_night', bestNight); }
   updateBestLine();
@@ -432,8 +482,10 @@ function die(kind){
   $('endTitle').textContent = 'TAKEN';
   $('endScore').textContent = fmt(score);
   $('endStats').textContent = `${night - 1} ${night - 1 === 1 ? 'night' : 'nights'} survived · ${Math.round(P.x)} m into night ${night} · best ${fmt(bestScore)}`;
-  $('newBest').innerHTML = isBest && score > 0 ? '<span class="newbest">New personal best</span>' : '';
-  $('ach').innerHTML = `<span class="got">★ ${achGot.length}/${ACH.length} achievements</span>` + ACH.filter(a => achGot.includes(a[0])).map(a => `<span class="got">${a[1]}</span>`).join('');
+  $('newBest').innerHTML = isBest && score > 0 ? `<div class="seal"><span class="flame"></span><b>New personal best</b><small>${prevBest ? '+' + fmt(score - prevBest) + ' over your last best' : 'Your first mark on the corniche'}</small></div>` : '';
+  $('againSub').textContent = (touch ? '' : 'Press R · ') + (night >= bestNight ? 'night ' + (night + 1) + ' is waiting' : 'she is waiting');
+  $('achH').textContent = `Relics found · ${achGot.length} of ${ACH.length}`;
+  $('ach').innerHTML = ACH.map(a => `<div class="medal ${achGot.includes(a[0]) ? 'got' : ''} ${runAch.includes(a[0]) ? 'new' : ''}" title="${a[1]}"><i>${ICON[a[0]]}</i><em>${achGot.includes(a[0]) ? SHORT[a[0]] : '?'}</em></div>`).join('');
   lastRun = { score: Math.round(score), night, dur: Math.round(runT), seed: runSeed, ev: { gold, resisted, combo: bestCombo, x: Math.round(P.x) }, submitted: false };
   // "so close" lines
   const close = [], toHome = Math.round(L - P.x);
@@ -441,7 +493,7 @@ function die(kind){
   if (!isBest && bestScore > score) close.push(`${fmt(bestScore - score)} short of your best`);
   $('soClose').textContent = close.join(' · ');
   $('rankLine').textContent = '';
-  lastShare = { night, score: Math.round(score), log: nightsLog.join('') + '💀' };
+  lastShare = { night, score: Math.round(score), gold: runGold, log: nightsLog.join('') + '💀' };
   $('name').value = me.name || myName || ''; $('nameMsg').textContent = '';
   buzz([200, 80, 300]);
   afterDeath();
@@ -530,7 +582,14 @@ function bindPlayer(){
 async function afterDeath(){
   // with a saved name the score goes in straight away; otherwise ask for one
   if (LB_URL && me.name && lastRun.score > 0) { $('submit').style.display = 'none'; await finishSubmit(); }
-  else { $('submit').style.display = (lastRun.score > 0) ? 'flex' : 'none'; await board($('board1')); if (!LB_URL) $('submit').style.display = 'none'; }
+  else if (!LB_URL) {
+    const local = store.get('fm_dlb_local', []); local.push({ name: myName || me.name || 'You', score: lastRun.score, night: lastRun.night, me: true }); local.sort((a,b) => b.score - a.score); store.set('fm_dlb_local', local.slice(0, 10));
+    lastRun.submitted = true;
+    $('nameBtn').textContent = 'Put it on my card'; $('name').placeholder = 'Your name for your card';
+    $('submit').style.display = (!myName && lastRun.score > 0) ? 'flex' : 'none';
+    await board($('board1'));
+  }
+  else { $('submit').style.display = (lastRun.score > 0) ? 'flex' : 'none'; await board($('board1')); }
 }
 async function finishSubmit(){
   const res = await submitRun();
@@ -547,7 +606,7 @@ $('submit').addEventListener('submit', async e => {
   e.preventDefault();
   const name = cleanName($('name').value);
   if (name.length < 3) { $('nameMsg').textContent = '3–14 letters or numbers.'; return; }
-  if (!LB_URL) return;
+  if (!LB_URL) { myName = name; store.set('fm_dlb_name', name); const l = store.get('fm_dlb_local', []); l.forEach(r => { if (r.name === 'You') r.name = name; }); store.set('fm_dlb_local', l); $('submit').style.display = 'none'; board($('board1')); return; }
   $('nameMsg').textContent = 'Saving…';
   const j = await claimName(name);
   if (!j) { $('nameMsg').textContent = 'Could not reach the leaderboard. Try again.'; return; }
@@ -691,7 +750,71 @@ function begin(){
   showCard('Night 1', '2:14 AM', touch ? 'Hold WALK. Stay in the light.' : 'Hold → to walk. Stay in the light.', '', 2.2, null);
 }
 $('start').onclick = begin; $('again').onclick = begin;
-$('share').onclick = async () => { const s = lastShare || {}; const d = {title:"Don't Look Back", text:`Don't Look Back · ${dubaiDay().slice(6)}/${dubaiDay().slice(4,6)}\n${s.log || ''}\nNight ${s.night || 1} · ${fmt(s.score || 0)}${s.rank ? ' · #' + s.rank + ' today' : ''}\nCan you make it home?`, url: 'https://fablemare.com/follow/'}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(d.text + ' ' + d.url); $('share').textContent = 'Copied'; } } catch(e){} };
+// ---------- share card ----------
+const loadImg = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+let cardBlob = null, cardUrl = '';
+function fitText(c, t, max, size, weight){ let s = size; do { c.font = `${weight||''} ${s}px Cardo, Georgia, serif`; s -= 2; } while (c.measureText(t).width > max && s > 20); return s + 2; }
+async function makeCard(){
+  const s = lastShare || {}, W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  try { await document.fonts.load('700 40px Cardo'); await document.fonts.load('italic 40px Cardo'); await document.fonts.load('40px Cardo'); } catch(e){}
+  const [bg, logo] = await Promise.all([loadImg('img/woman.jpg?v=2'), loadImg('../logo.png')]);
+  x.fillStyle = '#07080b'; x.fillRect(0, 0, W, H);
+  if (bg) { const sc = 1.5; x.drawImage(bg, -190, -20, bg.width * sc, bg.height * sc); }
+  let g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(7,8,11,.45)'); g.addColorStop(.3, 'rgba(7,8,11,.12)'); g.addColorStop(.48, 'rgba(7,8,11,.8)'); g.addColorStop(.6, 'rgba(7,8,11,.97)'); g.addColorStop(1, '#07080b'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  g = x.createRadialGradient(W/2, H*.42, 200, W/2, H*.5, 900); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.7)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  // grain
+  const n = x.getImageData(0, 0, W, H), d = n.data; for (let i = 0; i < d.length; i += 4) { const v = (Math.random() - .5) * 16; d[i] += v; d[i+1] += v; d[i+2] += v; } x.putImageData(n, 0, 0);
+  // gold frame
+  x.strokeStyle = 'rgba(231,192,106,.55)'; x.lineWidth = 2; x.strokeRect(34, 34, W - 68, H - 68); x.strokeStyle = 'rgba(231,192,106,.2)'; x.strokeRect(46, 46, W - 92, H - 92);
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+  // brand
+  if (logo) { x.save(); x.beginPath(); x.arc(W/2, 116, 33, 0, 7); x.clip(); x.drawImage(logo, W/2 - 36, 80, 72, 72); x.restore(); }
+  x.fillStyle = '#e9e2d0'; x.font = '700 30px Cardo, Georgia, serif'; x.letterSpacing = '12px'; x.fillText('FABLEMARE', W/2 + 6, 196); x.letterSpacing = '0px';
+  x.shadowColor = 'rgba(0,0,0,.9)'; x.shadowBlur = 18;
+  x.fillStyle = '#e7c06a'; x.font = '700 64px Cardo, Georgia, serif'; x.letterSpacing = '6px'; x.fillText("DON'T LOOK BACK", W/2 + 3, 300); x.letterSpacing = '0px';
+  x.fillStyle = 'rgba(233,226,208,.75)'; x.font = 'italic 30px Cardo, Georgia, serif'; x.fillText('A game of the Umm Al Duwais legend', W/2, 346);
+  // player
+  const name = (myName || me.name || 'A wanderer');
+  x.fillStyle = 'rgba(233,226,208,.7)'; x.font = '26px Cardo, Georgia, serif'; x.letterSpacing = '8px'; x.fillText('SURVIVOR CARD', W/2 + 4, 560); x.letterSpacing = '0px';
+  x.fillStyle = '#f3ecdb'; fitText(x, name, 860, 92, 700); x.fillText(name, W/2, 650);
+  x.fillStyle = '#e7c06a'; x.font = 'italic 36px Cardo, Georgia, serif'; x.fillText(titleFor(s.night || 1), W/2, 704);
+  // score
+  x.shadowColor = 'rgba(231,150,60,.75)'; x.shadowBlur = 40; x.fillStyle = '#ffd98a'; x.font = '700 168px Cardo, Georgia, serif'; x.fillText(fmt(s.score || 0), W/2, 880); x.shadowBlur = 18; x.shadowColor = 'rgba(0,0,0,.9)';
+  const stats = [`${s.night || 1} ${s.night === 1 ? 'night' : 'nights'}`]; if (s.rank) stats.push(`#${s.rank} today`); if (s.gold) stats.push(`${s.gold} gold`);
+  x.fillStyle = '#e9e2d0'; x.font = '36px Cardo, Georgia, serif'; x.letterSpacing = '3px'; x.fillText(stats.join('   ·   '), W/2, 945); x.letterSpacing = '0px';
+  // divider
+  x.strokeStyle = 'rgba(231,192,106,.5)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(W/2 - 220, 995); x.lineTo(W/2 - 20, 995); x.moveTo(W/2 + 20, 995); x.lineTo(W/2 + 220, 995); x.stroke();
+  x.fillStyle = '#e7c06a'; x.beginPath(); x.moveTo(W/2, 985); x.lineTo(W/2 + 9, 995); x.lineTo(W/2, 1005); x.lineTo(W/2 - 9, 995); x.fill();
+  // challenge
+  const q1 = s.night > 1 ? `She took me on night ${s.night}.` : 'She took me on the first night.';
+  x.fillStyle = '#f3ecdb'; x.font = 'italic 46px Cardo, Georgia, serif'; x.fillText('“' + q1, W/2, 1068);
+  x.fillText(`Can you beat ${fmt(s.score || 0)}?”`, W/2, 1124);
+  // footer
+  const day = dubaiDay(); x.fillStyle = 'rgba(233,226,208,.55)'; x.font = '26px Cardo, Georgia, serif'; x.fillText(`Night of ${day.slice(6)}.${day.slice(4,6)}.${day.slice(0,4)}`, W/2, 1186);
+  x.shadowBlur = 0; const bw = 640, bx = (W - bw)/2, by = 1214; g = x.createLinearGradient(bx, 0, bx + bw, 0); g.addColorStop(0, '#b8832e'); g.addColorStop(.5, '#f0c96f'); g.addColorStop(1, '#b8832e'); x.fillStyle = g;
+  x.beginPath(); x.roundRect ? x.roundRect(bx, by, bw, 68, 34) : x.rect(bx, by, bw, 68); x.fill();
+  x.fillStyle = '#1a1208'; x.font = '700 28px Cardo, Georgia, serif'; x.letterSpacing = '3px'; x.fillText('PLAY FREE  ·  FABLEMARE.COM', W/2 + 2, by + 44); x.letterSpacing = '0px';
+  return new Promise(r => c.toBlob(b => r(b), 'image/png'));
+}
+$('share').onclick = async () => {
+  $('share').textContent = 'Drawing your card…';
+  cardBlob = await makeCard(); $('share').textContent = 'Share my card';
+  if (!cardBlob) return;
+  if (cardUrl) URL.revokeObjectURL(cardUrl); cardUrl = URL.createObjectURL(cardBlob);
+  $('cardImg').src = cardUrl; $('cardSave').href = cardUrl; $('cardModal').classList.add('on');
+};
+$('cardShare').onclick = async () => {
+  const s = lastShare || {}, text = `She took me on night ${s.night || 1}. Can you beat ${fmt(s.score || 0)}? 🕯️`, url = 'https://fablemare.com/follow/';
+  const file = new File([cardBlob], 'dont-look-back.png', { type: 'image/png' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], text: text + ' ' + url });
+    else if (navigator.share) await navigator.share({ title: "Don't Look Back", text, url });
+    else { $('cardSave').click(); }
+  } catch(e){}
+};
+$('cardClose').onclick = () => $('cardModal').classList.remove('on');
+$('cardModal').onclick = e => { if (e.target === $('cardModal')) $('cardModal').classList.remove('on'); };
+if (/[?&]test\b/.test(location.search)) window.__fmt = { newRun, die, unlock, set(o){ state = 'play'; night = o.night; score = o.score; runGold = o.gold; }, get card(){ return cardBlob; } };
 window.__fm = { get P(){return P;}, get Her(){return Her;}, get oud(){return oud;}, get state(){return state;}, get gold(){return gold;}, get lit(){return lightAt(P.x,t);}, get night(){return night;}, get score(){return score;} };
 requestAnimationFrame(frame);
 })();
