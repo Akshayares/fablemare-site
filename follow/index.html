@@ -254,7 +254,7 @@ body:has(#end.on) .legal{display:none}
 (() => {
 'use strict';
 /* Leaderboard endpoint (Google Apps Script web app). Empty = this device only. */
-const LB_DEPLOYED = '';
+const LB_DEPLOYED = 'https://script.google.com/macros/s/AKfycbwukLqKZLBv_a2wbd6-XA6ZTzdU5tWBeFjFog0b7hOApav3GWFHFzMUVFmKIkVI--87xw/exec';
 const LB_URL = (new URLSearchParams(location.search).get('lb') || LB_DEPLOYED).replace(/\/$/, '');
 const GAME = 'dlb';
 const dubaiDay = () => { const d = new Date(Date.now() + 4*3600e3); return d.getUTCFullYear() + String(d.getUTCMonth()+1).padStart(2,'0') + String(d.getUTCDate()).padStart(2,'0'); };
