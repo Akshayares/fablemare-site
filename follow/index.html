@@ -52,11 +52,11 @@ button{font:inherit;color:inherit}
 #padRun{right:24px}
 #padTake{left:24px;width:84px;height:84px;border-color:rgba(255,200,110,.7);color:#ffd99a}
 .touch .pad.show{display:flex}
-.overlay{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 7vw 40px;opacity:0;pointer-events:none;transition:opacity .45s;overflow:auto}
+.overlay{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-start;justify-content:center;text-align:center;padding:80px 7vw 40px;opacity:0;pointer-events:none;transition:opacity .45s;overflow:auto}
 .overlay.on{opacity:1;pointer-events:auto}
 .overlay .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.42) saturate(.9);z-index:-2}
 .overlay::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(7,8,10,.2),rgba(7,8,10,.9) 75%);z-index:-1}
-.inner{max-width:640px}
+.inner{max-width:640px;margin:auto}
 .eyebrow{letter-spacing:.38em;text-transform:uppercase;font-size:.7rem;color:var(--teal);margin:0 0 14px}
 .overlay h1,.overlay h2{margin:0;font-weight:700;line-height:1.02;color:#f3e6c8;text-shadow:0 0 30px rgba(255,186,100,.3)}
 .overlay h1{font-size:clamp(2.6rem,8vw,5.2rem);letter-spacing:.08em}
@@ -97,7 +97,7 @@ button{font:inherit;color:inherit}
 .submit input:focus{border-color:var(--gold)}
 .board{margin:22px auto 0;max-width:420px;text-align:left;font-size:.95rem}
 .board h3{margin:0 0 8px;font-weight:400;font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--teal);text-align:center}
-.board ol{list-style:none;margin:0;padding:0;max-height:240px;overflow:auto}
+.board ol{list-style:none;margin:0;padding:0}
 .board li{display:grid;grid-template-columns:2.2em 1fr auto auto;gap:10px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.06);color:#d6ccb9}
 .board li .r{color:var(--muted)}
 .board li .s{color:#f3e6c8;font-weight:700}
@@ -108,6 +108,17 @@ button{font:inherit;color:inherit}
 .ach{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
 .ach span{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:4px 9px;border:1px solid #2a2d33;color:#55524c}
 .ach span.got{border-color:rgba(201,164,92,.6);color:var(--gold)}
+.close{color:#ffb36b;letter-spacing:.08em;margin:8px 0 0!important;font-size:1rem!important}
+.rankline{color:var(--gold)!important;font-size:.95rem!important;letter-spacing:.06em;margin:10px 0 0!important}
+.submit .note{flex-basis:100%;margin:6px 0 0;color:#ffb36b;font-size:.85rem}
+.tabs{display:flex;gap:6px;justify-content:center;margin-bottom:10px}
+.tab{background:none;border:1px solid #2a2d33;color:var(--muted);padding:5px 12px;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+.tab.on{border-color:var(--gold);color:var(--gold)}
+.board li .tag{font-style:normal;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);margin-left:6px}
+.board li .ti{display:block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#6f6a60}
+.board li.gap{display:block;text-align:center;color:#55524c;border:0;padding:2px}
+.player{margin-top:14px;border-top:1px solid rgba(255,255,255,.06);padding-top:10px;text-align:center}
+.btns.small{margin-top:8px}.btns.small .btn{padding:8px 14px;font-size:.66rem}
 .overlay .retry{margin-top:14px;font-size:.74rem;letter-spacing:.2em;color:var(--muted)}
 </style>
 </head>
@@ -148,6 +159,7 @@ button{font:inherit;color:inherit}
     </div>
     <div class="keys" id="keys">Hold <kbd>→</kbd> or <kbd>D</kbd> to walk · <kbd>Shift</kbd> to run · <kbd>E</kbd> to take gold · <kbd>R</kbd> to retry</div>
     <p class="stats" id="bestLine" style="margin-top:14px"></p>
+    <p class="stats" style="margin-top:6px;color:#7fb3b3">Today's corniche is the same for every player · new layout at midnight UAE</p>
     <div class="btns"><button class="btn" id="start">Play</button><button class="btn ghost" id="showBoard">Leaderboard</button></div>
     <div class="board" id="board0" style="display:none"></div>
   </div>
@@ -160,10 +172,13 @@ button{font:inherit;color:inherit}
     <h2 id="endTitle">TAKEN</h2>
     <div class="big-score" id="endScore">0</div>
     <p class="stats" id="endStats"></p>
+    <p class="close" id="soClose"></p>
     <div id="newBest"></div>
+    <p class="rankline" id="rankLine"></p>
     <form class="submit" id="submit" style="display:none" autocomplete="off">
-      <input id="name" maxlength="14" placeholder="Your name" aria-label="Your name for the leaderboard">
-      <button class="btn" type="submit">Save score</button>
+      <input id="name" maxlength="14" placeholder="Pick a name" aria-label="Your name for the leaderboard">
+      <button class="btn" type="submit">Join the leaderboard</button>
+      <p class="note" id="nameMsg"></p>
     </form>
     <div class="board" id="board1"></div>
     <div class="ach" id="ach"></div>
@@ -181,7 +196,13 @@ button{font:inherit;color:inherit}
 (() => {
 'use strict';
 /* Leaderboard endpoint (Google Apps Script web app). Empty = this device only. */
-const LB_URL = '';
+const LB_DEPLOYED = '';
+const LB_URL = (new URLSearchParams(location.search).get('lb') || LB_DEPLOYED).replace(/\/$/, '');
+const GAME = 'dlb';
+const dubaiDay = () => { const d = new Date(Date.now() + 4*3600e3); return d.getUTCFullYear() + String(d.getUTCMonth()+1).padStart(2,'0') + String(d.getUTCDate()).padStart(2,'0'); };
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+let R = Math.random, runSeed = dubaiDay();
+const rr = (a,b) => a + R()*(b-a);
 
 const $ = id => document.getElementById(id);
 const cv = $('cv'), cx = cv.getContext('2d');
@@ -202,7 +223,7 @@ const ACH = [
   ['close','Close call'],['greedy','5 gold in one night'],['pure','A night with no gold'],['resist','Resist her 5 times'],['sprint','Night under 40s']
 ];
 function unlock(k){ if (!achGot.includes(k)) { achGot.push(k); store.set('fm_dlb_ach', achGot); popup('★ ' + ACH.find(a=>a[0]===k)[1], '#e7c06a', 1.6); } }
-function updateBestLine(){ $('bestLine').textContent = bestScore ? `Your best: ${fmt(bestScore)} · night ${bestNight}` : ''; }
+function updateBestLine(){ $('bestLine').textContent = bestScore ? `Your best: ${fmt(bestScore)} · night ${bestNight} · ${titleFor(bestNight)}` : ''; }
 updateBestLine();
 ['end_taken'].forEach(k => { const i = new Image(); i.src = 'img/'+k+'.jpg'; });
 
@@ -233,14 +254,15 @@ const NIGHT_SUBS = ['', "She's out tonight.", 'The lamps are older here.', 'She 
 function build(){
   const N = night;
   L = Math.min(420, 170 + N*30);
+  R = mulberry32((+runSeed) * 101 + night * 7919);
   lamps = []; let x = 10;
   const pBroken = Math.min(0.6, 0.1 + N*0.06);
-  while (x < L - 14) { lamps.push({x, r: 6.2, broken: Math.random() < pBroken && x > 30, ph: Math.random()*10, dimv: 1}); x += rnd(19, 28) + Math.min(14, N*1.6) + x/L*4; }
-  stalls = N < 6 ? [{x: L*rnd(.45,.6), r: 11}] : (Math.random() < .5 ? [{x: L*rnd(.4,.7), r: 10}] : []);
+  while (x < L - 14) { lamps.push({x, r: 6.2, broken: R() < pBroken && x > 30, ph: R()*10, dimv: 1}); x += rr(19, 28) + Math.min(14, N*1.6) + x/L*4; }
+  stalls = N < 6 ? [{x: L*rr(.45,.6), r: 11}] : (R() < .5 ? [{x: L*rr(.4,.7), r: 10}] : []);
   lamps = lamps.filter(l => !stalls.some(s => Math.abs(s.x-l.x) < 14));
   bangles = [];
   const pts = [...lamps.map(l=>l.x), ...stalls.map(s=>s.x)].sort((a,b)=>a-b);
-  for (let i=0;i<pts.length-1;i++){ const gap = pts[i+1]-pts[i]; if (gap > 17 && Math.random() < 0.75) bangles.push({x: pts[i]+gap*rnd(.4,.6), taken:false, t:Math.random()*6}); }
+  for (let i=0;i<pts.length-1;i++){ const gap = pts[i+1]-pts[i]; if (gap > 17 && R() < 0.75) bangles.push({x: pts[i]+gap*rr(.4,.6), taken:false, t:R()*6}); }
   palms = []; for (let p=-30; p<L*0.6+60; p+=rnd(5,11)) palms.push({x:p, h:rnd(6.5,10), lean:rnd(-.18,.18), s:rnd(.85,1.15)});
   skyline = []; for (let p=-60; p<L*0.12+160; p+=rnd(2.5,6)) skyline.push({x:p, w:rnd(2,5), h:rnd(4,16)*(Math.random()<.15?1.8:1), lit:Math.random()});
   stars = Array.from({length:110},()=>({x:Math.random(), y:Math.random()*0.5, s:Math.random()*1.3+0.2, t:Math.random()*6}));
@@ -268,7 +290,9 @@ function resetNight(){
   Her = {on:false, x:-50, a:0, cool: Math.max(3, 7 - night*0.5), wait:0};
   gold = 0; oud = 0; nextWhisper = rnd(5,8); whisperOn = 0; whisperResolved = true; shake = 0; cam = P.x; lastStep = 0; nightT = 0; distScored = 0; mult = 1; closeArmed = false; nightScore = 0;
 }
-function newRun(){ night = 1; score = 0; runT = 0; seen = false; resisted = 0; popups = []; resetNight(); }
+let combo = 1, lastBonusT = -99, bestCombo = 1;
+function newRun(){ runSeed = dubaiDay(); night = 1; score = 0; runT = 0; seen = false; resisted = 0; popups = []; combo = 1; lastBonusT = -99; bestCombo = 1; nightsLog = []; resetNight(); }
+let nightsLog = [];
 newRun();
 
 /* popups */
@@ -280,7 +304,12 @@ function drawPopups(dt){
     cx.fillText(p.text, W*0.36, H*0.8 - S*3.4 - p.y - i*S*0.5); cx.shadowBlur = 0; cx.globalAlpha = 1; });
   popups = popups.filter(p => p.life > 0);
 }
-function addScore(n, label, color){ score += n; nightScore += n; if (label) { popup(label + '  +' + fmt(n), color); sfx.bonus(); } }
+function addScore(n, label, color, chain){
+  if (chain) { combo = (t - lastBonusT < 8) ? Math.min(3, combo + 0.5) : 1; lastBonusT = t; bestCombo = Math.max(bestCombo, combo); n = Math.round(n * combo); }
+  score += n; nightScore += n;
+  if (label) { popup(label + (chain && combo > 1 ? '  ×' + combo : '') + '  +' + fmt(n), color); sfx.bonus(); }
+}
+const buzz = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch(e){} };
 
 /* input */
 const held = new Set();
@@ -349,13 +378,13 @@ function update(dt){
     if (t - lastChime > 1.6 - Math.min(1.1, (20-Math.min(20,dd))*0.06)) { lastChime = t; sfx.chime(clamp(1 - dd/30, 0.08, 1)); }
     if (dd < 4.6 && dd > 1 && !seen) { seen = true; flash = 0.45; }
     if (dd < 2.6) closeArmed = true;
-    if (closeArmed && dd > 9) { closeArmed = false; addScore(150*N, 'CLOSE CALL!', '#ffb36b'); unlock('close'); }
+    if (closeArmed && dd > 9) { closeArmed = false; addScore(150*N, 'CLOSE CALL!', '#ffb36b', true); buzz(60); unlock('close'); }
     if (dd < 1.0) return die('taken');
     if (Math.random() < dt*0.7) smoke.push({x: Her.x + rnd(-.5,.5), y: rnd(1, 2.4), a: 0.5, v: rnd(.3,.8)});
     nextWhisper -= dt;
     if (nextWhisper <= 0 && dd < 16 && dd > 2.5) { whisper(LINES[(Math.random()*LINES.length)|0], 3.2); sfx.whisper(); $('turn').classList.add('on'); whisperResolved = false; nextWhisper = Math.max(5, rnd(9, 15) - N*0.6); shake = 0.25; }
   }
-  if (whisperOn > 0) { whisperOn -= dt; if (whisperOn <= 0) { $('whisper').classList.remove('on'); $('turn').classList.remove('on'); if (!whisperResolved) { whisperResolved = true; resisted++; addScore(75*N, 'RESISTED', '#9fd3d3'); if (resisted >= 5) unlock('resist'); } } }
+  if (whisperOn > 0) { whisperOn -= dt; if (whisperOn <= 0) { $('whisper').classList.remove('on'); $('turn').classList.remove('on'); if (!whisperResolved) { whisperResolved = true; resisted++; addScore(75*N, 'RESISTED', '#9fd3d3', true); if (resisted >= 5) unlock('resist'); } } }
   const bp = 1.25 - oud/100*0.8;
   if (oud > 25 && t - lastBeat > bp) { lastBeat = t; sfx.heart(clamp(oud/100, .25, 1)); }
   let near = null;
@@ -363,14 +392,14 @@ function update(dt){
   $('hint').textContent = near ? (touch ? 'Gold · TAKE?' : 'Gold · press E') : '';
   $('hint').classList.toggle('on', !!near);
   $('padTake').classList.toggle('show', !!near);
-  if (input.take && near) { near.taken = true; gold++; mult = 1 + gold; addScore(50*N*gold, 'GOLD x' + gold, '#e7c06a'); sfx.pickup(gold); oud = Math.min(100, oud+15); Her.cool = Math.min(Her.cool, 1.5); if (gold >= 5) unlock('greedy'); }
+  if (input.take && near) { near.taken = true; gold++; mult = 1 + gold; addScore(50*N*gold, 'GOLD ' + gold, '#e7c06a', true); buzz(25); sfx.pickup(gold); oud = Math.min(100, oud+15); Her.cool = Math.min(Her.cool, 1.5); if (gold >= 5) unlock('greedy'); }
   input.take = false;
   if (P.x >= L) return clearNight();
   // hud
   $('prog').style.width = (P.x/L*100)+'%'; $('dot').style.left = (P.x/L*100)+'%';
   $('oudBar').style.width = oud+'%'; $('stamBar').style.width = (P.stam*100)+'%';
   $('goldCount').textContent = 'Gold ' + gold;
-  $('scoreVal').textContent = fmt(score); $('nightLbl').textContent = 'Night ' + night; $('multLbl').textContent = gold ? 'gold x' + gold : '';
+  $('scoreVal').textContent = fmt(score); $('nightLbl').textContent = 'Night ' + night; $('multLbl').textContent = (t - lastBonusT < 8 && combo > 1) ? 'combo ×' + combo : (gold ? 'gold ' + gold : '');
 }
 function hideInPlay(){ $('whisper').classList.remove('on'); $('turn').classList.remove('on'); $('hint').classList.remove('on'); ['padTake'].forEach(id => $(id).classList.remove('show')); }
 function clearNight(){
@@ -378,6 +407,7 @@ function clearNight(){
   const par = L / 3.2, fast = Math.max(0, Math.round((par - nightT) * 25 * night));
   const bonus = 500 * night;
   score += bonus + fast;
+  nightsLog.push(gold ? '💰' : '🕯️');
   if (night >= 3) unlock('night3'); if (night >= 5) unlock('night5'); if (night >= 10) unlock('night10');
   if (gold === 0) unlock('pure'); if (nightT < 40) unlock('sprint');
   const tally = `Night bonus  +${fmt(bonus)}\n${fast ? 'Speed bonus  +' + fmt(fast) + '\n' : ''}Score  ${fmt(score)}`;
@@ -403,37 +433,129 @@ function die(kind){
   $('endScore').textContent = fmt(score);
   $('endStats').textContent = `${night - 1} ${night - 1 === 1 ? 'night' : 'nights'} survived · ${Math.round(P.x)} m into night ${night} · best ${fmt(bestScore)}`;
   $('newBest').innerHTML = isBest && score > 0 ? '<span class="newbest">New personal best</span>' : '';
-  $('ach').innerHTML = ACH.map(a => `<span class="${achGot.includes(a[0])?'got':''}">${a[1]}</span>`).join('');
-  lastRun = { score: Math.round(score), night, dur: Math.round(runT), submitted: false };
-  $('name').value = myName;
-  $('submit').style.display = score > 0 ? 'flex' : 'none';
-  board($('board1'), true);
-  setTimeout(() => { $('end').classList.add('on'); $('legal').style.display = 'block'; }, 1000);
+  $('ach').innerHTML = `<span class="got">★ ${achGot.length}/${ACH.length} achievements</span>` + ACH.filter(a => achGot.includes(a[0])).map(a => `<span class="got">${a[1]}</span>`).join('');
+  lastRun = { score: Math.round(score), night, dur: Math.round(runT), seed: runSeed, ev: { gold, resisted, combo: bestCombo, x: Math.round(P.x) }, submitted: false };
+  // "so close" lines
+  const close = [], toHome = Math.round(L - P.x);
+  if (toHome <= 40) close.push(`${toHome} m from home`);
+  if (!isBest && bestScore > score) close.push(`${fmt(bestScore - score)} short of your best`);
+  $('soClose').textContent = close.join(' · ');
+  $('rankLine').textContent = '';
+  lastShare = { night, score: Math.round(score), log: nightsLog.join('') + '💀' };
+  $('name').value = me.name || myName || ''; $('nameMsg').textContent = '';
+  buzz([200, 80, 300]);
+  afterDeath();
+  setTimeout(() => { $('end').classList.add('on'); }, 1000);
 }
 
 /* leaderboard */
-let lastRun = null, cache = null;
-const clean = s => (s||'').replace(/[^\p{L}\p{N} _.\-]/gu, '').trim().slice(0, 14);
-async function fetchBoard(){
-  if (LB_URL) { try { const r = await fetch(LB_URL + '?a=top', {cache:'no-store'}); const j = await r.json(); if (j && j.top) { cache = j.top; return {list: j.top, global: true}; } } catch(e){} }
-  return {list: store.get('fm_dlb_local', []), global: false};
+let lastRun = null, curTab = 'today';
+function titleFor(n){ return n >= 10 ? 'Legend of the Corniche' : n >= 5 ? 'Survivor' : n >= 3 ? 'Witness' : 'Wanderer'; }
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cleanName = s => (s||'').replace(/[^A-Za-z0-9_.\-؀-ۿ]/g, '').slice(0, 14);
+function rid(n){ const a = new Uint8Array(n), c = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; crypto.getRandomValues(a); return Array.from(a, x => c[x % (/* id: lowercase only */ n === 16 ? 36 : 62)]).join(''); }
+let me = store.get('fm_player', null);
+if (!me || !me.id) { me = { id: rid(16), key: rid(28), name: '' }; store.set('fm_player', me); }
+if (!me.name && myName) me.name = '';   // a name only counts once the server has accepted it
+async function api(params){
+  if (!LB_URL) return null;
+  const q = new URLSearchParams(params).toString();
+  try { const r = await fetch(LB_URL + (LB_URL.includes('?') ? '&' : '?') + q, {cache:'no-store'}); return await r.json(); } catch(e){ return null; }
 }
-function renderBoard(el, list, global, me){
-  if (!list.length) { el.innerHTML = '<h3>Leaderboard</h3><p class="note">No scores yet. Be the first.</p>'; return; }
-  el.innerHTML = `<h3>${global ? 'Top survivors · worldwide' : 'Your best runs · this device'}</h3><ol>` + list.slice(0, 20).map((r,i) => `<li class="${me && r.id === me ? 'me' : ''}"><span class="r">${i+1}</span><span>${(r.name||'Anonymous').replace(/</g,'&lt;')}</span><span class="ni">N${r.night}</span><span class="s">${fmt(r.score)}</span></li>`).join('') + '</ol>' + (global ? '' : '<p class="note">Worldwide leaderboard coming soon.</p>');
+async function claimName(name){
+  const j = await api({a:'claim', id: me.id, key: me.key, name});
+  if (j && j.ok) { me.name = j.name; store.set('fm_player', me); myName = j.name; store.set('fm_dlb_name', j.name); }
+  return j;
 }
-async function board(el, show){ el.style.display = show ? 'block' : el.style.display; el.innerHTML = '<p class="note">Loading…</p>'; const b = await fetchBoard(); renderBoard(el, b.list, b.global); }
-$('showBoard').onclick = () => { const el = $('board0'); if (el.style.display === 'none') { el.style.display = 'block'; board(el, true); } else el.style.display = 'none'; };
+async function submitRun(){
+  if (!lastRun || lastRun.submitted) return null;
+  lastRun.submitted = true;
+  const local = store.get('fm_dlb_local', []); local.push({ name: me.name || 'You', score: lastRun.score, night: lastRun.night, me: true }); local.sort((a,b) => b.score - a.score); store.set('fm_dlb_local', local.slice(0, 20));
+  return api({a:'submit', d: JSON.stringify({ id: me.id, key: me.key, game: GAME, score: lastRun.score, night: lastRun.night, dur: lastRun.dur, seed: lastRun.seed, ev: lastRun.ev })});
+}
+function rowHtml(r, rank){
+  return `<li class="${r.me ? 'me' : ''}"><span class="r">${rank}</span><span>${esc(r.name)}${r.staff ? ' <em class="tag">staff</em>' : ''}<small class="ti">${esc(titleFor(r.night||1))}</small></span><span class="ni">N${r.night}</span><span class="s">${fmt(r.score)}</span></li>`;
+}
+function tabsHtml(){ return `<div class="tabs">${[['today','Today'],['week','This week'],['all','All time']].map(([k,l]) => `<button class="tab ${k===curTab?'on':''}" data-tab="${k}">${l}</button>`).join('')}</div>`; }
+async function board(el){
+  el.style.display = 'block';
+  if (!LB_URL) {
+    const list = store.get('fm_dlb_local', []);
+    el.innerHTML = '<h3>Your best runs · this device</h3>' + (list.length ? '<ol>' + list.slice(0,10).map((r,i) => rowHtml(r, i+1)).join('') + '</ol>' : '<p class="note">No runs yet.</p>') + '<p class="note">Worldwide leaderboard coming soon.</p>';
+    return null;
+  }
+  el.innerHTML = tabsHtml() + '<p class="note">Loading…</p>';
+  const j = await api({a:'board', game: GAME, b: curTab, id: me.id});
+  if (!j || !j.ok) { el.innerHTML = tabsHtml() + '<p class="note">Leaderboard is resting. Try again in a moment.</p>'; bindTabs(el); return null; }
+  let body = '';
+  if (!j.top.length) body = '<p class="note">No scores yet. Be the first.</p>';
+  else {
+    const inTop = !j.me || j.me.rank <= 8;
+    if (inTop) body = '<ol>' + j.top.slice(0, 10).map((r,i) => rowHtml(r, i+1)).join('') + '</ol>';
+    else {
+      const near = (j.near || []).filter(r => r.rank > 3 && r.rank >= j.me.rank - 3 && r.rank <= j.me.rank + 2);
+      body = '<ol>' + j.top.slice(0, 3).map((r,i) => rowHtml(r, i+1)).join('') + '<li class="gap">· · ·</li>' + near.map(r => rowHtml(r, r.rank)).join('') + '</ol>';
+    }
+  }
+  const meLine = j.me ? `<p class="note">You're <b>#${j.me.rank}</b> of ${j.total} ${curTab === 'today' ? 'today' : curTab === 'week' ? 'this week' : 'all time'}.</p>` : (me.name ? '' : '<p class="note">Finish a run and save a name to join.</p>');
+  el.innerHTML = tabsHtml() + body + meLine;
+  bindTabs(el);
+  return j;
+}
+function bindTabs(el){ el.querySelectorAll('.tab').forEach(b => b.onclick = () => { curTab = b.dataset.tab; board(el); }); }
+function playerPanel(){
+  const code = btoa(me.id + '.' + me.key).replace(/=+$/,'');
+  return `<div class="player"><p class="note">${me.name ? `Playing as <b>${esc(me.name)}</b> · ${esc(titleFor(bestNight||1))}` : 'No name saved yet'}</p>
+    <div class="btns small"><button class="btn ghost" id="copyCode">Copy my player code</button><button class="btn ghost" id="useCode">Use a code</button></div>
+    <p class="note">Your code moves your name and scores to another phone or browser. Keep it private.</p></div>`;
+}
+$('showBoard').onclick = async () => {
+  const el = $('board0');
+  if (el.style.display !== 'none') { el.style.display = 'none'; $('legal').style.display = 'block'; return; }
+  $('legal').style.display = 'none';
+  await board(el);
+  if (LB_URL) { el.insertAdjacentHTML('beforeend', playerPanel()); bindPlayer(); }
+};
+function bindPlayer(){
+  const code = btoa(me.id + '.' + me.key).replace(/=+$/,'');
+  const c = $('copyCode'), u = $('useCode');
+  if (c) c.onclick = async () => { try { await navigator.clipboard.writeText(code); c.textContent = 'Copied'; } catch(e){ prompt('Your player code', code); } };
+  if (u) u.onclick = async () => {
+    const v = (prompt('Paste your player code') || '').trim(); if (!v) return;
+    try { const [id, key] = atob(v).split('.'); const j = await api({a:'whoami', id, key});
+      if (j && j.ok) { me = { id, key, name: j.name }; store.set('fm_player', me); alert('Welcome back, ' + j.name + '.'); $('board0').style.display = 'none'; $('showBoard').click(); }
+      else alert('That code was not recognised.'); } catch(e){ alert('That code was not recognised.'); }
+  };
+}
+async function afterDeath(){
+  // with a saved name the score goes in straight away; otherwise ask for one
+  if (LB_URL && me.name && lastRun.score > 0) { $('submit').style.display = 'none'; await finishSubmit(); }
+  else { $('submit').style.display = (lastRun.score > 0) ? 'flex' : 'none'; await board($('board1')); if (!LB_URL) $('submit').style.display = 'none'; }
+}
+async function finishSubmit(){
+  const res = await submitRun();
+  curTab = 'today';
+  const j = await board($('board1'));
+  const lines = [];
+  if (res && res.ok && res.ranks && res.ranks.today) lines.push(`#${res.ranks.today} today` + (res.ranks.all ? ` · #${res.ranks.all} all time` : ''));
+  if (j && j.me && j.near) { const above = j.near.find(r => r.rank === j.me.rank - 1); if (above) lines.push(`${fmt(above.score - j.me.score + 1)} to pass ${esc(above.name)} (#${above.rank})`); }
+  if (res && !res.ok && res.err === 'rejected') lines.push('This run could not be verified, so it was not ranked.');
+  if (lines.length) $('rankLine').innerHTML = lines.join(' · ');
+  lastShare.rank = res && res.ranks ? res.ranks.today : null;
+}
 $('submit').addEventListener('submit', async e => {
-  e.preventDefault(); if (!lastRun || lastRun.submitted) return;
-  const name = clean($('name').value) || 'Anonymous'; myName = name; store.set('fm_dlb_name', name);
-  const id = Math.random().toString(36).slice(2, 10);
-  const entry = { id, name, score: lastRun.score, night: lastRun.night, dur: lastRun.dur, ts: Date.now() };
-  lastRun.submitted = true; $('submit').style.display = 'none';
-  const local = store.get('fm_dlb_local', []); local.push(entry); local.sort((a,b) => b.score - a.score); store.set('fm_dlb_local', local.slice(0, 20));
-  if (LB_URL) { try { await fetch(LB_URL, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(entry) }); } catch(e){} }
-  const b = await fetchBoard(); renderBoard($('board1'), b.list, b.global, id);
+  e.preventDefault();
+  const name = cleanName($('name').value);
+  if (name.length < 3) { $('nameMsg').textContent = '3–14 letters or numbers.'; return; }
+  if (!LB_URL) return;
+  $('nameMsg').textContent = 'Saving…';
+  const j = await claimName(name);
+  if (!j) { $('nameMsg').textContent = 'Could not reach the leaderboard. Try again.'; return; }
+  if (!j.ok) { $('nameMsg').textContent = j.err === 'taken' ? `"${name}" is taken. How about "${j.suggest}"?` : 'Please pick another name.'; if (j.suggest) $('name').value = j.suggest; return; }
+  $('nameMsg').textContent = ''; $('submit').style.display = 'none';
+  await finishSubmit();
 });
+let lastShare = {};
 
 /* drawing */
 const sx = x => (x - cam) * S + W*0.36;
@@ -569,7 +691,7 @@ function begin(){
   showCard('Night 1', '2:14 AM', touch ? 'Hold WALK. Stay in the light.' : 'Hold → to walk. Stay in the light.', '', 2.2, null);
 }
 $('start').onclick = begin; $('again').onclick = begin;
-$('share').onclick = async () => { const d = {title:"Don't Look Back", text:`I survived ${Math.max(0,(lastRun?lastRun.night:1)-1)} nights and scored ${fmt(lastRun?lastRun.score:0)} in Don't Look Back. Can you beat me?`, url: 'https://fablemare.com/follow/'}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(d.text + ' ' + d.url); $('share').textContent = 'Copied'; } } catch(e){} };
+$('share').onclick = async () => { const s = lastShare || {}; const d = {title:"Don't Look Back", text:`Don't Look Back · ${dubaiDay().slice(6)}/${dubaiDay().slice(4,6)}\n${s.log || ''}\nNight ${s.night || 1} · ${fmt(s.score || 0)}${s.rank ? ' · #' + s.rank + ' today' : ''}\nCan you make it home?`, url: 'https://fablemare.com/follow/'}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(d.text + ' ' + d.url); $('share').textContent = 'Copied'; } } catch(e){} };
 window.__fm = { get P(){return P;}, get Her(){return Her;}, get oud(){return oud;}, get state(){return state;}, get gold(){return gold;}, get lit(){return lightAt(P.x,t);}, get night(){return night;}, get score(){return score;} };
 requestAnimationFrame(frame);
 })();
