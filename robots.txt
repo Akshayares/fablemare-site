@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://fablemare.com/sitemap.xml
