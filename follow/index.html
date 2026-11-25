@@ -77,7 +77,23 @@ button{font:inherit;color:inherit}
 .stats{color:var(--muted);font-size:.88rem;letter-spacing:.06em}
 .legal{position:fixed;bottom:8px;left:0;right:0;text-align:center;font-size:.7rem;color:#5d5a54;z-index:31}
 .legal a{color:inherit}
+.ladder{position:relative;display:grid;grid-template-columns:repeat(4,1fr);max-width:420px;margin:22px auto 6px;padding:0 6px}
+.ladder::before{content:'';position:absolute;left:12.5%;right:12.5%;top:9px;height:1px;background:linear-gradient(90deg,rgba(231,192,106,.7) var(--p,0%),#2b2e35 var(--p,0%))}
+.step{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px}
+.step i{width:11px;height:11px;margin-top:3px;border-radius:50%;border:1px solid #3a3d44;background:#0b0c0f;transform:rotate(45deg);border-radius:2px}
+.step b{font-weight:400;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#55534d;white-space:nowrap}
+.step small{font-size:.6rem;letter-spacing:.12em;color:#45433e}
+.step.done i{background:#b8913f;border-color:#e7c06a}
+.step.done b{color:#b9a477}
+.step.now i{width:17px;height:17px;margin-top:0;background:#ffd88c;border-color:#fff1c9;box-shadow:0 0 14px rgba(255,190,100,.9),0 0 30px rgba(255,160,70,.45);animation:nowp 2.4s ease-in-out infinite}
+.step.now b{color:#ffe2a6;text-shadow:0 0 12px rgba(255,190,100,.6)}
+.step.now small{color:#c9a45c}
+@keyframes nowp{50%{box-shadow:0 0 6px rgba(255,190,100,.5),0 0 14px rgba(255,160,70,.2)}}
+.ladder-next{font-size:.8rem;letter-spacing:.08em;color:var(--muted);margin:6px 0 0;font-style:italic}
+.ladder-next b{color:var(--gold);font-weight:400;font-style:normal}
+@media (max-width:640px){.step b{font-size:.56rem;letter-spacing:.14em}}
 body:has(#end.on) .legal{display:none}
+@media (max-width:640px){body:has(#intro.on) .legal{display:none}}
 @media (max-width:640px){.rules{grid-template-columns:1fr}.brand span{display:none}.bar{width:56px}.meters{letter-spacing:.12em}}
 .score{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:21;text-align:center;pointer-events:none;display:none}
 .score.on{display:block}
@@ -189,6 +205,7 @@ body:has(#end.on) .legal{display:none}
     </div>
     <div class="keys" id="keys">Hold <kbd>→</kbd> or <kbd>D</kbd> to walk · <kbd>Shift</kbd> to run · <kbd>E</kbd> to take gold · <kbd>R</kbd> to retry</div>
     <p class="stats" id="bestLine" style="margin-top:14px"></p>
+    <div id="ladder0"></div>
     <p class="stats" style="margin-top:6px;color:#7fb3b3">Today's corniche is the same for every player · new layout at midnight UAE</p>
     <div class="btns"><button class="btn" id="start">Play</button><button class="btn ghost" id="showBoard">Leaderboard</button></div>
     <div class="board" id="board0" style="display:none"></div>
@@ -202,6 +219,7 @@ body:has(#end.on) .legal{display:none}
     <h2 id="endTitle">TAKEN</h2>
     <div class="big-score" id="endScore">0</div>
     <p class="stats" id="endStats"></p>
+    <div id="ladder1"></div>
     <p class="close" id="soClose"></p>
     <div id="newBest"></div>
     <p class="rankline" id="rankLine"></p>
@@ -273,7 +291,9 @@ const ICON = {
   sprint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 8h9M2 12h12M3 16h9"/><path d="M15 6l6 6-6 6"/></svg>'
 };
 const SHORT = {night3:'Night 3', night5:'Night 5', night10:'Night 10', close:'Close call', greedy:'Gold ×5', pure:'No gold', resist:'Resisted ×5', sprint:'Under 40s'};
-function updateBestLine(){ $('bestLine').textContent = bestScore ? `Your best: ${fmt(bestScore)} · night ${bestNight} · ${titleFor(bestNight)}` : ''; }
+const RANKS = [['Wanderer', 1], ['Witness', 3], ['Survivor', 5], ['Legend', 10]];
+const rankIdx = n => RANKS.reduce((k, r, i) => n >= r[1] ? i : k, 0);
+function updateBestLine(){ $('bestLine').textContent = bestScore ? `Your best: ${fmt(bestScore)} · night ${bestNight} · ${titleFor(bestNight)}` : ''; $('ladder0').innerHTML = ladderHtml(bestNight || 1, true); }
 updateBestLine();
 ['end_taken'].forEach(k => { const i = new Image(); i.src = 'img/'+k+'.jpg'; });
 
@@ -483,6 +503,7 @@ function die(kind){
   $('endScore').textContent = fmt(score);
   $('endStats').textContent = `${night - 1} ${night - 1 === 1 ? 'night' : 'nights'} survived · ${Math.round(P.x)} m into night ${night} · best ${fmt(bestScore)}`;
   $('newBest').innerHTML = isBest && score > 0 ? `<div class="seal"><span class="flame"></span><b>New personal best</b><small>${prevBest ? '+' + fmt(score - prevBest) + ' over your last best' : 'Your first mark on the corniche'}</small></div>` : '';
+  $('ladder1').innerHTML = ladderHtml(night, true);
   $('againSub').textContent = (touch ? '' : 'Press R · ') + (night >= bestNight ? 'night ' + (night + 1) + ' is waiting' : 'she is waiting');
   $('achH').textContent = `Relics found · ${achGot.length} of ${ACH.length}`;
   $('ach').innerHTML = ACH.map(a => `<div class="medal ${achGot.includes(a[0]) ? 'got' : ''} ${runAch.includes(a[0]) ? 'new' : ''}" title="${a[1]}"><i>${ICON[a[0]]}</i><em>${achGot.includes(a[0]) ? SHORT[a[0]] : '?'}</em></div>`).join('');
@@ -502,6 +523,11 @@ function die(kind){
 
 /* leaderboard */
 let lastRun = null, curTab = 'today';
+function ladderHtml(n, next){
+  const k = rankIdx(n || 1), nx = RANKS[k + 1];
+  return `<div class="ladder" style="--p:${k * 100 / 3}%">` + RANKS.map((r, i) => `<div class="step ${i < k ? 'done' : i === k ? 'now' : ''}"><i></i><b>${r[0]}</b><small>Night ${r[1]}</small></div>`).join('') + '</div>' +
+    (next ? `<p class="ladder-next">${nx ? `Reach <b>night ${nx[1]}</b> to become ${nx[0] === 'Legend' ? 'a <b>Legend of the Corniche</b>' : 'a <b>' + nx[0] + '</b>'}` : 'You are a <b>Legend of the Corniche</b>'}</p>` : '');
+}
 function titleFor(n){ return n >= 10 ? 'Legend of the Corniche' : n >= 5 ? 'Survivor' : n >= 3 ? 'Witness' : 'Wanderer'; }
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cleanName = s => (s||'').replace(/[^A-Za-z0-9_.\-؀-ۿ]/g, '').slice(0, 14);
@@ -775,13 +801,26 @@ async function makeCard(){
   x.fillStyle = 'rgba(233,226,208,.75)'; x.font = 'italic 30px Cardo, Georgia, serif'; x.fillText('A game of the Umm Al Duwais legend', W/2, 346);
   // player
   const name = (myName || me.name || 'A wanderer');
-  x.fillStyle = 'rgba(233,226,208,.7)'; x.font = '26px Cardo, Georgia, serif'; x.letterSpacing = '8px'; x.fillText('SURVIVOR CARD', W/2 + 4, 560); x.letterSpacing = '0px';
-  x.fillStyle = '#f3ecdb'; fitText(x, name, 860, 92, 700); x.fillText(name, W/2, 650);
-  x.fillStyle = '#e7c06a'; x.font = 'italic 36px Cardo, Georgia, serif'; x.fillText(titleFor(s.night || 1), W/2, 704);
+  x.fillStyle = 'rgba(233,226,208,.7)'; x.font = '26px Cardo, Georgia, serif'; x.letterSpacing = '8px'; x.fillText('SURVIVOR CARD', W/2 + 4, 500); x.letterSpacing = '0px';
+  x.fillStyle = '#f3ecdb'; fitText(x, name, 860, 92, 700); x.fillText(name, W/2, 586);
+  x.fillStyle = '#e7c06a'; x.font = 'italic 36px Cardo, Georgia, serif'; x.fillText(titleFor(s.night || 1), W/2, 634);
+  // rank ladder
+  { const k = rankIdx(s.night || 1), x0 = 240, sp = 200, ly = 684; x.shadowBlur = 0;
+    x.lineWidth = 2; x.strokeStyle = 'rgba(80,80,86,.9)'; x.beginPath(); x.moveTo(x0, ly); x.lineTo(x0 + sp*3, ly); x.stroke();
+    if (k) { x.strokeStyle = '#e7c06a'; x.beginPath(); x.moveTo(x0, ly); x.lineTo(x0 + sp*k, ly); x.stroke(); }
+    RANKS.forEach((r, i) => { const cx = x0 + sp*i, sz = i === k ? 15 : 9;
+      x.save(); x.translate(cx, ly); x.rotate(Math.PI/4);
+      if (i === k) { x.shadowColor = 'rgba(255,190,100,.95)'; x.shadowBlur = 28; }
+      x.fillStyle = i < k ? '#b8913f' : i === k ? '#ffd88c' : '#0b0c0f'; x.fillRect(-sz/2*1.2, -sz/2*1.2, sz*1.2, sz*1.2);
+      x.shadowBlur = 0; x.lineWidth = 2; x.strokeStyle = i <= k ? '#f3d58f' : 'rgba(110,108,100,.9)'; x.strokeRect(-sz/2*1.2, -sz/2*1.2, sz*1.2, sz*1.2); x.restore();
+      x.font = (i === k ? '700 ' : '') + '22px Cardo, Georgia, serif'; x.letterSpacing = '4px';
+      x.fillStyle = i === k ? '#ffe2a6' : i < k ? '#b9a477' : 'rgba(150,146,136,.75)'; x.fillText(r[0].toUpperCase(), cx + 2, ly + 46);
+      x.font = '18px Cardo, Georgia, serif'; x.letterSpacing = '2px'; x.fillStyle = i === k ? '#c9a45c' : 'rgba(120,117,110,.8)'; x.fillText('NIGHT ' + r[1], cx + 1, ly + 72); x.letterSpacing = '0px'; });
+    x.shadowColor = 'rgba(0,0,0,.9)'; x.shadowBlur = 18; }
   // score
-  x.shadowColor = 'rgba(231,150,60,.75)'; x.shadowBlur = 40; x.fillStyle = '#ffd98a'; x.font = '700 168px Cardo, Georgia, serif'; x.fillText(fmt(s.score || 0), W/2, 880); x.shadowBlur = 18; x.shadowColor = 'rgba(0,0,0,.9)';
+  x.shadowColor = 'rgba(231,150,60,.75)'; x.shadowBlur = 40; x.fillStyle = '#ffd98a'; x.font = '700 150px Cardo, Georgia, serif'; x.fillText(fmt(s.score || 0), W/2, 900); x.shadowBlur = 18; x.shadowColor = 'rgba(0,0,0,.9)';
   const stats = [`${s.night || 1} ${s.night === 1 ? 'night' : 'nights'}`]; if (s.rank) stats.push(`#${s.rank} today`); if (s.gold) stats.push(`${s.gold} gold`);
-  x.fillStyle = '#e9e2d0'; x.font = '36px Cardo, Georgia, serif'; x.letterSpacing = '3px'; x.fillText(stats.join('   ·   '), W/2, 945); x.letterSpacing = '0px';
+  x.fillStyle = '#e9e2d0'; x.font = '36px Cardo, Georgia, serif'; x.letterSpacing = '3px'; x.fillText(stats.join('   ·   '), W/2, 956); x.letterSpacing = '0px';
   // divider
   x.strokeStyle = 'rgba(231,192,106,.5)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(W/2 - 220, 995); x.lineTo(W/2 - 20, 995); x.moveTo(W/2 + 20, 995); x.lineTo(W/2 + 220, 995); x.stroke();
   x.fillStyle = '#e7c06a'; x.beginPath(); x.moveTo(W/2, 985); x.lineTo(W/2 + 9, 995); x.lineTo(W/2, 1005); x.lineTo(W/2 - 9, 995); x.fill();
