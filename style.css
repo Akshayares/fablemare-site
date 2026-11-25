@@ -137,3 +137,11 @@ footer a:hover{color:var(--ink)}
  .reveal{opacity:1;transform:none}
  .hero .cta,.hero .tag{opacity:1;transform:none}
 }
+/* small phones: logo only in the header so all nav links fit */
+@media (max-width:560px){
+ header .brand{font-size:0;gap:0}
+ nav{display:flex;gap:20px}
+ nav a{margin-left:0;font-size:.86rem}
+}
+@media (max-width:340px){nav{gap:14px} nav a{font-size:.8rem}}
+main,.legal-page,article{overflow-wrap:anywhere}
