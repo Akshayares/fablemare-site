@@ -70,7 +70,8 @@ button{font:inherit;color:inherit}
 .btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:26px}
 .btn{position:relative;overflow:hidden;z-index:0;display:inline-block;padding:13px 30px;border:1px solid var(--gold);background:rgba(7,8,10,.4);color:var(--ink);text-decoration:none;letter-spacing:.18em;text-transform:uppercase;font-size:.78rem;cursor:pointer}
 .btn::before{content:"";position:absolute;inset:0;background:var(--gold);transform:translateY(101%);transition:transform .45s cubic-bezier(.2,.7,.2,1);z-index:-1}
-.btn:hover{color:#0b0b0b}.btn:hover::before{transform:none}
+@media (hover:hover){.btn:hover,.btn.ghost:hover{color:#0b0b0b}.btn:hover::before{transform:none}}
+.btn:active,.btn.ghost:active{color:#0b0b0b}.btn:active::before{transform:none}
 .btn.ghost{border-color:rgba(201,164,92,.35);color:var(--muted)}
 .found{display:flex;gap:10px;justify-content:center;margin:20px 0 6px}
 .found span{width:46px;height:3px;background:#2a2d33}
