@@ -127,7 +127,12 @@ body:has(#end.on) .legal{display:none}
 @keyframes ember{50%{box-shadow:0 0 0 1px rgba(255,230,170,.9),0 12px 60px -6px rgba(255,170,70,.85)}}
 .medals-wrap{padding-bottom:30px;margin-top:28px}
 .medals-h{margin:0 0 12px!important;font-size:.68rem!important;letter-spacing:.38em;text-transform:uppercase;color:var(--teal)!important}
-.medals{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;max-width:520px;margin:0 auto}
+.medals{display:grid;grid-template-columns:repeat(9,1fr);gap:10px;max-width:600px;margin:0 auto}
+.medal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.medal.sel i{border-color:var(--gold);color:var(--gold)}
+.ach-hint{min-height:2.6em;margin:12px auto 0;max-width:420px;text-align:center;font-style:italic;color:#cbb78f;font-size:.95rem}
+.board li.ghost span:nth-child(2){font-style:italic;opacity:.78}
+.board li .tag.g{color:#9aa3ad}
 .medal{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
 .medal em{white-space:nowrap}
 .medal i{position:relative;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:1px solid #2b2e35;background:radial-gradient(circle at 50% 35%,#16181d,#0a0b0d);color:#3a3c42}
@@ -137,7 +142,7 @@ body:has(#end.on) .legal{display:none}
 .medal.got em{color:#d9c29a}
 .medal.new i{animation:popin .9s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes popin{from{transform:scale(.2);opacity:0}}
-@media (max-width:640px){.medals{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:640px){.medals{grid-template-columns:repeat(5,1fr)}}
 .cardModal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(4,5,6,.88);backdrop-filter:blur(6px);padding:20px}
 .cardModal.on{display:flex}
 .cm-inner{text-align:center;max-width:460px;width:100%}
@@ -236,7 +241,7 @@ body:has(#end.on) .legal{display:none}
       <a class="btn ghost" href="https://www.youtube.com/@Fablemare">Watch the legend</a>
     </div>
     <div class="board" id="board1"></div>
-    <div class="medals-wrap"><p class="medals-h" id="achH">Relics found</p><div class="medals" id="ach"></div></div>
+    <div class="medals-wrap"><p class="medals-h" id="achH">Relics found</p><div class="medals" id="ach"></div><p class="ach-hint" id="achHint">Tap a relic to read its clue.</p></div>
   </div>
 </div>
 <div class="cardModal" id="cardModal" aria-hidden="true">
@@ -279,8 +284,9 @@ const store = { get(k, d){ try { const v = localStorage.getItem(k); return v ===
 let bestScore = store.get('fm_dlb_best_score', 0), bestNight = store.get('fm_dlb_best_night', 0), achGot = store.get('fm_dlb_ach', []), myName = store.get('fm_dlb_name', '');
 const ACH = [
   ['night3','Survive night 3'],['night5','Survive night 5'],['night10','Survive night 10'],
-  ['close','Close call'],['greedy','5 gold in one night'],['pure','A night with no gold'],['resist','Resist her 5 times'],['sprint','Night under 40s']
+  ['close','Close call'],['greedy','5 gold in one night'],['pure','A night with no gold'],['resist','Resist her 5 times'],['sprint','Night under 40s'],['share','Share your card']
 ];
+const HINT = {night3:'Survive three nights on the corniche.', night5:'Live to see the fifth night.', night10:'Ten nights. Few have walked that far.', close:'Let her come close… then slip away.', greedy:'Take five pieces of her gold in a single night.', pure:'Walk a whole night without touching her gold.', resist:'When she whispers your name, resist her five times.', sprint:'Reach home in under forty seconds.', share:'Show someone else the corniche.'};
 let runAch = [], runGold = 0;
 function unlock(k){ if (!achGot.includes(k)) { achGot.push(k); runAch.push(k); store.set('fm_dlb_ach', achGot); popup('✦ ' + ACH.find(a=>a[0]===k)[1], '#e7c06a', 1.6); } }
 const MOON = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15.5 3.2a8.8 8.8 0 1 0 5.3 15.6A7.2 7.2 0 0 1 15.5 3.2z"/><text x="11" y="16" font-size="7" fill="currentColor" stroke="none" text-anchor="middle" font-family="Cardo,serif">${n}</text></svg>`;
@@ -290,9 +296,19 @@ const ICON = {
   greedy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="9" cy="13" rx="6" ry="3.4"/><ellipse cx="15" cy="11" rx="6" ry="3.4"/><path d="M15 5.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor"/></svg>',
   pure: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="9" y="11" width="6" height="10" rx="1"/><path d="M12 11V9"/><path d="M12 3.5c1.6 1.8 2 3 0 5-2-2-1.6-3.2 0-5z" fill="currentColor"/></svg>',
   resist: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 12c2-3 5-4 8-2 3-2 6-1 8 2-2 3-5 4-8 4s-6-1-8-4z"/><path d="M4 12h16"/><path d="M3 4l18 16"/></svg>',
-  sprint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 8h9M2 12h12M3 16h9"/><path d="M15 6l6 6-6 6"/></svg>'
+  sprint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 8h9M2 12h12M3 16h9"/><path d="M15 6l6 6-6 6"/></svg>',
+  share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6"/></svg>'
 };
-const SHORT = {night3:'Night 3', night5:'Night 5', night10:'Night 10', close:'Close call', greedy:'Gold ×5', pure:'No gold', resist:'Resisted ×5', sprint:'Under 40s'};
+const SHORT = {night3:'Night 3', night5:'Night 5', night10:'Night 10', close:'Close call', greedy:'Gold ×5', pure:'No gold', resist:'Resisted ×5', sprint:'Under 40s', share:'Shared'};
+function renderRelics(){
+  $('achH').textContent = `Relics found · ${achGot.length} of ${ACH.length}`;
+  $('ach').innerHTML = ACH.map(a => `<div class="medal ${achGot.includes(a[0]) ? 'got' : ''} ${runAch.includes(a[0]) ? 'new' : ''}" data-k="${a[0]}" role="button" tabindex="0"><i>${ICON[a[0]]}</i><em>${achGot.includes(a[0]) ? SHORT[a[0]] : '?'}</em></div>`).join('');
+  $('ach').querySelectorAll('.medal').forEach(m => m.onclick = () => {
+    $('ach').querySelectorAll('.medal').forEach(x => x.classList.toggle('sel', x === m));
+    const k = m.dataset.k, got = achGot.includes(k);
+    $('achHint').innerHTML = got ? `<b>${esc(ACH.find(a=>a[0]===k)[1])}</b> · found` : `“${esc(HINT[k])}”`;
+  });
+}
 const RANKS = [['Wanderer', 1], ['Witness', 3], ['Survivor', 5], ['Legend', 10]];
 const rankIdx = n => RANKS.reduce((k, r, i) => n >= r[1] ? i : k, 0);
 function updateBestLine(){ $('bestLine').textContent = bestScore ? `Your best: ${fmt(bestScore)} · night ${bestNight} · ${titleFor(bestNight)}` : ''; $('ladder0').innerHTML = ladderHtml(bestNight || 1, true); }
@@ -508,7 +524,8 @@ function die(kind){
   $('ladder1').innerHTML = ladderHtml(night, true);
   $('againSub').textContent = (touch ? '' : 'Press R · ') + (night >= bestNight ? 'night ' + (night + 1) + ' is waiting' : 'she is waiting');
   $('achH').textContent = `Relics found · ${achGot.length} of ${ACH.length}`;
-  $('ach').innerHTML = ACH.map(a => `<div class="medal ${achGot.includes(a[0]) ? 'got' : ''} ${runAch.includes(a[0]) ? 'new' : ''}" title="${a[1]}"><i>${ICON[a[0]]}</i><em>${achGot.includes(a[0]) ? SHORT[a[0]] : '?'}</em></div>`).join('');
+  renderRelics();
+  if (false) $('ach').innerHTML = ACH.map(a => `<div class="medal ${achGot.includes(a[0]) ? 'got' : ''} ${runAch.includes(a[0]) ? 'new' : ''}" title="${a[1]}"><i>${ICON[a[0]]}</i><em>${achGot.includes(a[0]) ? SHORT[a[0]] : '?'}</em></div>`).join('');
   lastRun = { score: Math.round(score), night, dur: Math.round(runT), seed: runSeed, ev: { gold, resisted, combo: bestCombo, x: Math.round(P.x) }, submitted: false };
   // "so close" lines
   const close = [], toHome = Math.round(L - P.x);
@@ -553,8 +570,38 @@ async function submitRun(){
   const local = store.get('fm_dlb_local', []); local.push({ name: me.name || 'You', score: lastRun.score, night: lastRun.night, me: true }); local.sort((a,b) => b.score - a.score); store.set('fm_dlb_local', local.slice(0, 20));
   return api({a:'submit', d: JSON.stringify({ id: me.id, key: me.key, game: GAME, score: lastRun.score, night: lastRun.night, dur: lastRun.dur, seed: lastRun.seed, ev: lastRun.ev })});
 }
+// Ghosts of the corniche: in-world characters that keep the board from feeling empty. Shown as ghosts, never as real players.
+const GHOSTS = [['The Pearl Diver',11840,4],['Grandmother\u2019s Warning',9960,4],['The Last Taxi Driver',8310,3],['Adam',7420,3],['The Oud Seller',6650,3],
+  ['The Night Watchman',5870,3],['The Dhow Captain',5120,3],['The Lamp Lighter',4380,2],['The Fisherman\u2019s Son',3720,2],['The Coral Mason',3050,2],
+  ['The Henna Artist',2510,2],['The Wedding Guest',1980,2],['The Taxi Passenger',1460,1],['The Boy Who Looked Back',1020,1],['The Sleepwalker',740,1],
+  ['The Coffee Seller',520,1],['The Stranger',310,1]];
+function ghostRows(tab){
+  const day = dubaiDay();
+  return GHOSTS.map(([name, sc, n], i) => {
+    let h = 2166136261; const key = (tab === 'today' ? day : 'w') + name;
+    for (let c = 0; c < key.length; c++) h = Math.imul(h ^ key.charCodeAt(c), 16777619);
+    const k = tab === 'today' ? 0.86 + ((h >>> 0) % 1000) / 1000 * 0.28 : 1.12;
+    return { name, score: Math.round(sc * k / 10) * 10, night: n, ghost: true };
+  });
+}
+// Merge real players (server) with ghosts; server "staff" seed rows are dropped. Ranks are recomputed.
+function mergeBoard(j, tab){
+  const staff = (j.top || []).filter(r => r.staff).map(r => r.score);
+  const staffAbove = sc => staff.filter(x => x > sc).length;
+  const seen = new Set(), real = [];
+  (j.top || []).forEach((r, i) => { if (!r.staff) { const k = r.name + '|' + r.score; if (!seen.has(k)) { seen.add(k); real.push(Object.assign({}, r, { rr: i + 1 - staffAbove(r.score) })); } } });
+  (j.near || []).forEach(r => { if (!r.staff) { const k = r.name + '|' + r.score; if (!seen.has(k)) { seen.add(k); real.push(Object.assign({}, r, { rr: r.rank - staffAbove(r.score) })); } } });
+  const ghosts = ghostRows(tab);
+  const rows = real.concat(ghosts).sort((a, b) => b.score - a.score);
+  rows.forEach(r => {
+    const gAbove = ghosts.filter(g => g.score > r.score).length;
+    r.rank = r.ghost ? 1 + gAbove + real.filter(x => x.score > r.score).length : r.rr + gAbove;
+  });
+  const meRow = rows.find(r => r.me);
+  return { rows, meRank: meRow ? meRow.rank : null, meRow };
+}
 function rowHtml(r, rank){
-  return `<li class="${r.me ? 'me' : ''}"><span class="r">${rank}</span><span>${esc(r.name)}${r.staff ? ' <em class="tag">staff</em>' : ''}<small class="ti">${esc(titleFor(r.night||1))}</small></span><span class="ni">N${r.night}</span><span class="s">${fmt(r.score)}</span></li>`;
+  return `<li class="${r.me ? 'me' : ''}${r.ghost ? ' ghost' : ''}"><span class="r">${rank}</span><span>${esc(r.name)}${r.ghost ? ' <em class="tag g" title="A ghost of the corniche">👻</em>' : ''}<small class="ti">${esc(titleFor(r.night||1))}</small></span><span class="ni">N${r.night}</span><span class="s">${fmt(r.score)}</span></li>`;
 }
 function tabsHtml(){ return `<div class="tabs">${[['today','Today'],['week','This week'],['all','All time']].map(([k,l]) => `<button class="tab ${k===curTab?'on':''}" data-tab="${k}">${l}</button>`).join('')}</div>`; }
 async function board(el){
@@ -567,17 +614,15 @@ async function board(el){
   el.innerHTML = tabsHtml() + '<p class="note">Loading…</p>';
   const j = await api({a:'board', game: GAME, b: curTab, id: me.id});
   if (!j || !j.ok) { el.innerHTML = tabsHtml() + '<p class="note">Leaderboard is resting. Try again in a moment.</p>'; bindTabs(el); return null; }
+  const m = mergeBoard(j, curTab), rows = m.rows;
   let body = '';
-  if (!j.top.length) body = '<p class="note">No scores yet. Be the first.</p>';
+  if (!m.meRank || m.meRank <= 8) body = '<ol>' + rows.slice(0, 10).map(r => rowHtml(r, r.rank)).join('') + '</ol>';
   else {
-    const inTop = !j.me || j.me.rank <= 8;
-    if (inTop) body = '<ol>' + j.top.slice(0, 10).map((r,i) => rowHtml(r, i+1)).join('') + '</ol>';
-    else {
-      const near = (j.near || []).filter(r => r.rank > 3 && r.rank >= j.me.rank - 3 && r.rank <= j.me.rank + 2);
-      body = '<ol>' + j.top.slice(0, 3).map((r,i) => rowHtml(r, i+1)).join('') + '<li class="gap">· · ·</li>' + near.map(r => rowHtml(r, r.rank)).join('') + '</ol>';
-    }
+    const i = rows.indexOf(m.meRow);
+    body = '<ol>' + rows.slice(0, 3).map(r => rowHtml(r, r.rank)).join('') + '<li class="gap">· · ·</li>' + rows.slice(Math.max(3, i - 3), i + 3).map(r => rowHtml(r, r.rank)).join('') + '</ol>';
   }
-  const meLine = j.me ? `<p class="note">You're <b>#${j.me.rank}</b> of ${j.total} ${curTab === 'today' ? 'today' : curTab === 'week' ? 'this week' : 'all time'}.</p>` : (me.name ? '' : '<p class="note">Finish a run and save a name to join.</p>');
+  const meLine = m.meRank ? `<p class="note">You're <b>#${m.meRank}</b> ${curTab === 'today' ? 'today' : curTab === 'week' ? 'this week' : 'of all time'}.</p>` : (me.name ? '' : '<p class="note">Finish a run and save a name to join the ghosts of the corniche.</p>');
+  j.merged = m;
   el.innerHTML = tabsHtml() + body + meLine;
   bindTabs(el);
   return j;
@@ -624,11 +669,12 @@ async function finishSubmit(){
   curTab = 'today';
   const j = await board($('board1'));
   const lines = [];
-  if (res && res.ok && res.ranks && res.ranks.today) lines.push(`#${res.ranks.today} today` + (res.ranks.all ? ` · #${res.ranks.all} all time` : ''));
-  if (j && j.me && j.near) { const above = j.near.find(r => r.rank === j.me.rank - 1); if (above) lines.push(`${fmt(above.score - j.me.score + 1)} to pass ${esc(above.name)} (#${above.rank})`); }
+  const mm = j && j.merged;
+  if (res && res.ok && mm && mm.meRank) lines.push(`#${mm.meRank} today`);
+  if (mm && mm.meRow) { const i = mm.rows.indexOf(mm.meRow), above = i > 0 ? mm.rows[i - 1] : null; if (above) lines.push(`${fmt(above.score - mm.meRow.score + 10)} to pass ${esc(above.name)} (#${above.rank})`); }
   if (res && !res.ok && res.err === 'rejected') lines.push('This run could not be verified, so it was not ranked.');
   if (lines.length) $('rankLine').innerHTML = lines.join(' · ');
-  lastShare.rank = res && res.ranks ? res.ranks.today : null;
+  lastShare.rank = res && res.ok && mm ? mm.meRank : null;
 }
 $('submit').addEventListener('submit', async e => {
   e.preventDefault();
@@ -845,6 +891,7 @@ $('share').onclick = async () => {
   $('cardImg').src = cardUrl; $('cardSave').href = cardUrl; $('cardModal').classList.add('on');
 };
 $('cardShare').onclick = async () => {
+  shareRelic();
   const s = lastShare || {}, text = `She took me on night ${s.night || 1}. Can you beat ${fmt(s.score || 0)}? 🕯️`, url = 'https://fablemare.com/follow/';
   const file = new File([cardBlob], 'dont-look-back.png', { type: 'image/png' });
   try {
@@ -854,6 +901,8 @@ $('cardShare').onclick = async () => {
   } catch(e){}
 };
 $('cardClose').onclick = () => $('cardModal').classList.remove('on');
+$('cardSave').addEventListener('click', shareRelic);
+function shareRelic(){ if (!achGot.includes('share')) { achGot.push('share'); store.set('fm_dlb_ach', achGot); if ($('ach')) renderRelics(); } }
 $('cardModal').onclick = e => { if (e.target === $('cardModal')) $('cardModal').classList.remove('on'); };
 if (/[?&]test\b/.test(location.search)) window.__fmt = { newRun, die, unlock, set(o){ state = 'play'; night = o.night; score = o.score; runGold = o.gold; }, get card(){ return cardBlob; } };
 window.__fm = { get P(){return P;}, get Her(){return Her;}, get oud(){return oud;}, get state(){return state;}, get gold(){return gold;}, get lit(){return lightAt(P.x,t);}, get night(){return night;}, get score(){return score;} };
