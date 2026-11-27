@@ -40,6 +40,20 @@ button{font:inherit;color:inherit}
 #oudBar{background:linear-gradient(90deg,#7a5b2e,#e0a14f,#ff6a3d)}
 #stamBar{background:linear-gradient(90deg,#3f7d7e,#9fd3d3)}
 .gold{color:var(--gold)}
+.challenge{margin:14px auto 4px;max-width:520px;padding:12px 18px;border:1px solid rgba(231,192,106,.55);background:linear-gradient(180deg,rgba(60,40,12,.55),rgba(20,14,6,.55));box-shadow:0 0 30px rgba(231,170,80,.15);font-size:.98rem;line-height:1.45}
+.challenge small{display:block;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-size:.62rem;margin-bottom:4px}
+.challenge b{color:#ffd98a}
+.special{margin:12px auto 0;max-width:520px;color:#ffd6a0;font-style:italic;font-size:.95rem}
+.special b{font-style:normal;letter-spacing:.2em;text-transform:uppercase;font-size:.72rem;color:#ffb36b;margin-right:6px}
+.streak{color:#ffb36b!important}
+.pulse{margin:14px auto 0;max-width:420px;text-align:left}
+.pulse .pl{display:flex;justify-content:space-between;gap:10px;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.pulse .pl b{color:var(--ink);font-weight:400;letter-spacing:.08em}
+.pbar{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7a5b2e,#e7c06a);transition:width 1.2s ease}
+.close.won{color:#ffd98a!important}
+.pulse .pn{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:6px;text-align:center}
+@media (max-width:640px){.track{max-width:calc(100% - 24px)}.track b{right:0;top:-20px;transform:none;padding-left:0;font-size:.58rem}}
 .whisper{position:fixed;left:0;right:0;top:30%;z-index:16;text-align:center;font-style:italic;color:#f2d9a6;font-size:clamp(1.2rem,3.4vw,2rem);letter-spacing:.04em;text-shadow:0 0 24px rgba(255,170,90,.55),0 2px 8px #000;opacity:0;transition:opacity .6s;pointer-events:none;padding:0 6vw}
 .whisper.on{opacity:1}
 .turn{position:fixed;left:50%;top:46%;z-index:17;transform:translate(-50%,-50%) scale(.9);padding:16px 34px;background:rgba(120,20,20,.25);border:1px solid rgba(255,120,90,.7);color:#ffd6c7;letter-spacing:.32em;text-transform:uppercase;font-size:.86rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;box-shadow:0 0 40px rgba(255,80,50,.25)}
@@ -55,8 +69,8 @@ button{font:inherit;color:inherit}
 .touch .pad.show{display:flex}
 .overlay{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-start;justify-content:center;text-align:center;padding:80px 7vw 40px;opacity:0;pointer-events:none;transition:opacity .45s;overflow:auto}
 .overlay.on{opacity:1;pointer-events:auto}
-.overlay .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.42) saturate(.9);z-index:-2}
-.overlay::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(7,8,10,.2),rgba(7,8,10,.9) 75%);z-index:-1}
+.overlay .bg{position:fixed;inset:0;background-size:cover;background-position:center;filter:brightness(.42) saturate(.9);z-index:-2}
+.overlay::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,rgba(7,8,10,.2),rgba(7,8,10,.9) 75%);z-index:-1}
 .inner{max-width:640px;margin:auto}
 .eyebrow{letter-spacing:.38em;text-transform:uppercase;font-size:.7rem;color:var(--teal);margin:0 0 14px}
 .overlay h1,.overlay h2{margin:0;font-weight:700;line-height:1.02;color:#f3e6c8;text-shadow:0 0 30px rgba(255,186,100,.3)}
@@ -95,7 +109,8 @@ button{font:inherit;color:inherit}
 .ladder-next b{color:var(--gold);font-weight:400;font-style:normal}
 @media (max-width:640px){.step b{font-size:.56rem;letter-spacing:.14em}}
 body:has(#end.on) .legal{display:none}
-@media (max-width:640px){body:has(#intro.on) .legal{display:none}}
+body:has(#intro.on) .legal{display:none!important}
+.legal-in{margin-top:22px!important;font-size:.72rem!important;opacity:.6}.legal-in a{color:inherit}
 @media (max-width:640px){.rules{grid-template-columns:1fr}.brand span{display:none}.bar{width:56px}.meters{letter-spacing:.12em}}
 .score{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:21;text-align:center;pointer-events:none;display:none}
 .score.on{display:block}
@@ -203,6 +218,7 @@ body:has(#end.on) .legal{display:none}
   <div class="inner">
     <p class="eyebrow">A Fablemare game · Umm Al Duwais</p>
     <h1>Don't Look Back</h1>
+    <div class="challenge" id="challenge" hidden></div>
     <p>Every night you walk home along the corniche. Every night, she follows. How many nights can you survive?</p>
     <div class="rules">
       <div><span>Stay in the light.</span> She never steps into it.</div>
@@ -215,7 +231,11 @@ body:has(#end.on) .legal{display:none}
     <div id="ladder0"></div>
     <p class="stats" style="margin-top:6px;color:#7fb3b3">Today's corniche is the same for every player · new layout at midnight UAE</p>
     <div class="btns"><button class="btn" id="start">Play</button><button class="btn ghost" id="showBoard">Leaderboard</button></div>
+    <p class="special" id="special" hidden></p>
+    <p class="stats streak" id="streakLine" hidden></p>
+    <div class="pulse" id="pulse0" hidden></div>
     <div class="board" id="board0" style="display:none"></div>
+    <p class="stats legal-in">An original game based on an old Emirati legend · <a href="/privacy.html">Privacy</a></p>
   </div>
 </div>
 
@@ -230,6 +250,7 @@ body:has(#end.on) .legal{display:none}
     <p class="close" id="soClose"></p>
     <div id="newBest"></div>
     <p class="rankline" id="rankLine"></p>
+    <div class="pulse" id="pulse1" hidden></div>
     <form class="submit" id="submit" style="display:none" autocomplete="off">
       <input id="name" maxlength="14" placeholder="Pick a name" aria-label="Your name for the leaderboard">
       <button class="btn" type="submit" id="nameBtn">Join the leaderboard</button>
@@ -249,6 +270,7 @@ body:has(#end.on) .legal{display:none}
     <img id="cardImg" alt="Your Don't Look Back share card">
     <div class="btns">
       <button class="btn" id="cardShare">Share</button>
+      <button class="btn ghost" id="cardLink">Copy challenge link</button>
       <a class="btn ghost" id="cardSave" download="dont-look-back.png">Save image</a>
       <button class="btn ghost" id="cardClose">Close</button>
     </div>
@@ -266,6 +288,16 @@ const GAME = 'dlb';
 const dubaiDay = () => { const d = new Date(Date.now() + 4*3600e3); return d.getUTCFullYear() + String(d.getUTCMonth()+1).padStart(2,'0') + String(d.getUTCDate()).padStart(2,'0'); };
 function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 let R = Math.random, runSeed = dubaiDay();
+/* Weekend special nights (same for every player that day, by UAE date). Saturday: Fog Night. Sunday: Gold Rush Night. */
+const TESTING = /[?&]test\b/.test(location.search);
+const MODES = { fog: ['Fog Night', 'Thick fog tonight. The lamps reach less far.'], gold: ['Gold Rush Night', 'Gold everywhere, worth more… but she is faster.'] };
+function modeFor(day){
+  const forced = TESTING && new URLSearchParams(location.search).get('mode');
+  if (forced) return MODES[forced] ? forced : '';
+  const dow = new Date(Date.UTC(+day.slice(0,4), +day.slice(4,6) - 1, +day.slice(6))).getUTCDay();
+  return dow === 6 ? 'fog' : dow === 0 ? 'gold' : '';
+}
+let mode = modeFor(runSeed);
 const rr = (a,b) => a + R()*(b-a);
 
 const $ = id => document.getElementById(id);
@@ -313,6 +345,39 @@ const RANKS = [['Wanderer', 1], ['Witness', 3], ['Survivor', 5], ['Legend', 10]]
 const rankIdx = n => RANKS.reduce((k, r, i) => n >= r[1] ? i : k, 0);
 function updateBestLine(){ $('bestLine').textContent = bestScore ? `Your best: ${fmt(bestScore)} · night ${bestNight} · ${titleFor(bestNight)}` : ''; $('ladder0').innerHTML = ladderHtml(bestNight || 1, true); }
 updateBestLine();
+/* daily streak (this device): one run per UAE day keeps it alive */
+function dayShift(day, k){ const d = new Date(Date.UTC(+day.slice(0,4), +day.slice(4,6) - 1, +day.slice(6) + k)); return d.getUTCFullYear() + String(d.getUTCMonth()+1).padStart(2,'0') + String(d.getUTCDate()).padStart(2,'0'); }
+let streak = store.get('fm_dlb_streak', { last: '', n: 0 });
+function streakNow(){ const today = dubaiDay(); return (streak.last === today || streak.last === dayShift(today, -1)) ? streak.n : 0; }
+function bumpStreak(){ const today = dubaiDay(); if (streak.last === today) return; streak = { last: today, n: streak.last === dayShift(today, -1) ? streak.n + 1 : 1 }; store.set('fm_dlb_streak', streak); }
+function showStreak(){
+  const n = streakNow(), played = streak.last === dubaiDay(), el = $('streakLine');
+  if (!n) { el.hidden = true; return; }
+  el.hidden = false;
+  el.textContent = played ? `🔥 ${n}-night streak · come back tomorrow to keep it` : `🔥 ${n}-night streak · play tonight to keep it alive`;
+}
+/* special night banner */
+function showSpecial(){ const el = $('special'); if (!mode) { el.hidden = true; return; } el.hidden = false; el.innerHTML = `<b>Tonight · ${MODES[mode][0]}</b>${esc(MODES[mode][1])}`; }
+/* challenge links: ?c=<base64url of {n,s,g,d}> */
+const b64u = str => btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const unb64u = str => decodeURIComponent(escape(atob(str.replace(/-/g,'+').replace(/_/g,'/'))));
+let challenge = null;
+function initChallenge(){ try { const c = new URLSearchParams(location.search).get('c'); if (c) { const o = JSON.parse(unb64u(c)); const sc = Math.floor(+o.s), nn = Math.floor(+o.g); if (sc > 0 && sc < 1e8 && nn >= 1 && nn <= 60) challenge = { name: cleanName(o.n) || 'A wanderer', score: sc, night: nn, day: /^\d{8}$/.test(o.d) ? o.d : '' }; } } catch(e){} }
+function challengeUrl(){ const s = lastShare || {}; return 'https://fablemare.com/follow/?c=' + b64u(JSON.stringify({ n: myName || me.name || '', s: s.score || 0, g: s.night || 1, d: dubaiDay() })); }
+function showChallenge(){
+  const el = $('challenge'); if (!challenge) { el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = `<small>A challenge for you</small><b>${esc(challenge.name)}</b> scored <b>${fmt(challenge.score)}</b> and reached night ${challenge.night} (${esc(titleFor(challenge.night))}).<br>Can you beat it?`;
+}
+/* community goal: nights walked today by every player, together */
+const GOALS = [25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000];
+function pulseHtml(j, added){
+  const n = j.nights || 0, goal = GOALS.find(g => g > n) || n + 1, prevGoal = [...GOALS].reverse().find(g => g <= n);
+  const pct = Math.min(100, n / goal * 100);
+  return `<div class="pl"><span>Tonight's goal · all players together</span><b>${fmt(n)} / ${fmt(goal)}</b></div><div class="pbar"><i style="width:0" data-w="${pct}"></i></div>` +
+    `<p class="pn">${added ? `You added ${added} ${added === 1 ? 'night' : 'nights'}. ` : ''}${prevGoal ? `Goal of ${fmt(prevGoal)} reached ✓ · ` : ''}${fmt(goal - n)} more nights walked on the corniche to reach ${fmt(goal)}.</p>`;
+}
+function renderPulse(id, j, added){ const el = $(id); if (!j || !j.ok || typeof j.nights !== 'number') { el.hidden = true; return; } el.hidden = false; el.innerHTML = pulseHtml(j, added); requestAnimationFrame(() => requestAnimationFrame(() => { const i = el.querySelector('i'); if (i) i.style.width = i.dataset.w + '%'; })); }
 ['end_taken'].forEach(k => { const i = new Image(); i.src = 'img/'+k+'.jpg'; });
 
 /* audio */
@@ -345,12 +410,12 @@ function build(){
   R = mulberry32((+runSeed) * 101 + night * 7919);
   lamps = []; let x = 10;
   const pBroken = Math.min(0.6, 0.1 + N*0.06);
-  while (x < L - 14) { lamps.push({x, r: 6.2, broken: R() < pBroken && x > 30, ph: R()*10, dimv: 1}); x += rr(19, 28) + Math.min(14, N*1.6) + x/L*4; }
+  while (x < L - 14) { lamps.push({x, r: mode === 'fog' ? 5.4 : 6.2, broken: R() < pBroken && x > 30, ph: R()*10, dimv: 1}); x += rr(19, 28) + Math.min(14, N*1.6) + x/L*4; }
   stalls = N < 6 ? [{x: L*rr(.45,.6), r: 11}] : (R() < .5 ? [{x: L*rr(.4,.7), r: 10}] : []);
   lamps = lamps.filter(l => !stalls.some(s => Math.abs(s.x-l.x) < 14));
   bangles = [];
   const pts = [...lamps.map(l=>l.x), ...stalls.map(s=>s.x)].sort((a,b)=>a-b);
-  for (let i=0;i<pts.length-1;i++){ const gap = pts[i+1]-pts[i]; if (gap > 17 && R() < 0.75) bangles.push({x: pts[i]+gap*rr(.4,.6), taken:false, t:R()*6}); }
+  for (let i=0;i<pts.length-1;i++){ const gap = pts[i+1]-pts[i]; if (gap > (mode === 'gold' ? 13 : 17) && (mode === 'gold' || R() < 0.75)) bangles.push({x: pts[i]+gap*rr(.4,.6), taken:false, t:R()*6}); }
   palms = []; for (let p=-30; p<L*0.6+60; p+=rnd(5,11)) palms.push({x:p, h:rnd(6.5,10), lean:rnd(-.18,.18), s:rnd(.85,1.15)});
   skyline = []; for (let p=-60; p<L*0.12+160; p+=rnd(2.5,6)) skyline.push({x:p, w:rnd(2,5), h:rnd(4,16)*(Math.random()<.15?1.8:1), lit:Math.random()});
   stars = Array.from({length:110},()=>({x:Math.random(), y:Math.random()*0.5, s:Math.random()*1.3+0.2, t:Math.random()*6}));
@@ -379,7 +444,7 @@ function resetNight(){
   gold = 0; oud = 0; nextWhisper = rnd(5,8); whisperOn = 0; whisperResolved = true; shake = 0; cam = P.x; lastStep = 0; nightT = 0; distScored = 0; mult = 1; closeArmed = false; nightScore = 0;
 }
 let combo = 1, lastBonusT = -99, bestCombo = 1;
-function newRun(){ runAch = []; runGold = 0; runSeed = dubaiDay(); night = 1; score = 0; runT = 0; seen = false; resisted = 0; popups = []; combo = 1; lastBonusT = -99; bestCombo = 1; nightsLog = []; resetNight(); }
+function newRun(){ runAch = []; runGold = 0; runSeed = dubaiDay(); mode = modeFor(runSeed); night = 1; score = 0; runT = 0; seen = false; resisted = 0; popups = []; combo = 1; lastBonusT = -99; bestCombo = 1; nightsLog = []; resetNight(); }
 let nightsLog = [];
 newRun();
 
@@ -454,8 +519,9 @@ function update(dt){
   if (!Her.on && Her.cool <= 0 && lit < 0.15 && oud > Math.max(12, 30 - N*2) && !safe) { Her.on = true; Her.x = P.x - rnd(14, 18) + Math.min(4, N*0.4); Her.a = 0; sfx.chime(0.5); }
   if (Her.on) {
     Her.a = Math.min(1, Her.a + dt*0.7);
-    const cap = Math.min(4.45, 3.5 + N*0.09) + gold*0.22;
-    const sp = Math.min(cap, 1.9 + oud*0.03 + gold*0.3 + N*0.12);
+    const rush = mode === 'gold' ? 0.25 : 0;
+    const cap = Math.min(4.45, 3.5 + N*0.09) + gold*0.22 + rush;
+    const sp = Math.min(cap, 1.9 + oud*0.03 + gold*0.3 + N*0.12 + rush);
     const nx = Her.x + sp*dt;
     if (!(lit > 0.15 && lightAt(nx + 0.6, t) > 0.2)) Her.x = nx;
     if (Her.x < P.x - 34) Her.x = P.x - 34;
@@ -480,7 +546,7 @@ function update(dt){
   $('hint').textContent = near ? (touch ? 'Gold · TAKE?' : 'Gold · press E') : '';
   $('hint').classList.toggle('on', !!near);
   $('padTake').classList.toggle('show', !!near);
-  if (input.take && near) { near.taken = true; gold++; runGold++; mult = 1 + gold; addScore(50*N*gold, 'GOLD ' + gold, '#e7c06a', true); buzz(25); sfx.pickup(gold); oud = Math.min(100, oud+15); Her.cool = Math.min(Her.cool, 1.5); if (gold >= 5) unlock('greedy'); }
+  if (input.take && near) { near.taken = true; gold++; runGold++; mult = 1 + gold; addScore(Math.round(50*N*gold*(mode === 'gold' ? 1.5 : 1)), 'GOLD ' + gold, '#e7c06a', true); buzz(25); sfx.pickup(gold); oud = Math.min(100, oud+15); Her.cool = Math.min(Her.cool, 1.5); if (gold >= 5) unlock('greedy'); }
   input.take = false;
   if (P.x >= L) return clearNight();
   // hud
@@ -531,9 +597,13 @@ function die(kind){
   const close = [], toHome = Math.round(L - P.x);
   if (toHome <= 40) close.push(`${toHome} m from home`);
   if (!isBest && bestScore > score) close.push(`${fmt(bestScore - score)} short of your best`);
+  if (challenge) { if (score > challenge.score) close.unshift(`You beat ${challenge.name}'s ${fmt(challenge.score)}!`); else close.unshift(`${fmt(challenge.score - score)} short of ${challenge.name}'s ${fmt(challenge.score)}`); }
+  const sn = streakNow(); if (sn >= 2) close.push(`🔥 ${sn}-night streak`);
   $('soClose').textContent = close.join(' · ');
+  if (challenge && score > challenge.score) { $('soClose').classList.add('won'); } else $('soClose').classList.remove('won');
+  walkPing(night);
   $('rankLine').textContent = '';
-  lastShare = { night, score: Math.round(score), gold: runGold, log: nightsLog.join('') + '💀' };
+  lastShare = { night, score: Math.round(score), gold: runGold, log: nightsLog.join('') + '💀', streak: streakNow(), beat: challenge && score > challenge.score ? challenge.name : '' };
   $('name').value = me.name || myName || ''; $('nameMsg').textContent = '';
   buzz([200, 80, 300]);
   afterDeath();
@@ -559,6 +629,9 @@ async function api(params){
   const q = new URLSearchParams(params).toString();
   try { const r = await fetch(LB_URL + (LB_URL.includes('?') ? '&' : '?') + q, {cache:'no-store'}); return await r.json(); } catch(e){ return null; }
 }
+async function loadPulse(){ const j = await api({a:'pulse', game: GAME}); renderPulse('pulse0', j); return j; }
+async function walkPing(n){ $('pulse1').hidden = true; const j = await api({a:'walk', game: GAME, id: me.id, n}); renderPulse('pulse1', j, n); }
+loadPulse();
 async function claimName(name){
   const j = await api({a:'claim', id: me.id, key: me.key, name});
   if (j && j.ok) { me.name = j.name; store.set('fm_player', me); myName = j.name; store.set('fm_dlb_name', j.name); }
@@ -702,7 +775,7 @@ function draw(dt){
   cx.fillStyle = sky; cx.fillRect(-10,-10,W+20,H+20);
   for (const s of stars){ cx.globalAlpha = 0.35 + 0.35*Math.sin(t*1.5+s.t); cx.fillStyle = '#cfe3e0'; cx.fillRect(s.x*W, s.y*gy, s.s, s.s); }
   cx.globalAlpha = 1;
-  const mx = W*0.78 - cam*S*0.015, my = H*0.17, mr = Math.min(W,H)*0.045;
+  const mx = W*0.78 - cam*S*0.015, my = Math.max(H > W ? H*0.24 : H*0.17, 185), mr = Math.min(W,H)*0.045;
   let g = cx.createRadialGradient(mx,my,mr*0.5,mx,my,mr*6); g.addColorStop(0,'rgba(200,225,220,.22)'); g.addColorStop(1,'rgba(200,225,220,0)');
   cx.fillStyle = g; cx.fillRect(mx-mr*6,my-mr*6,mr*12,mr*12);
   cx.fillStyle = '#dfe9e2'; cx.beginPath(); cx.arc(mx,my,mr,0,7); cx.fill();
@@ -748,6 +821,8 @@ function draw(dt){
   if (state === 'play' && oud > 60){ cx.fillStyle = `rgba(80,10,5,${(oud-60)/40*0.18})`; cx.fillRect(-10,-10,W+20,H+20); }
   for (const f of fog){ f.x += f.v*dt; if (f.x < -.5) f.x = 1.5; if (f.x > 1.5) f.x = -.5; const fx = f.x*W, fy = f.y*H, fr = f.r*Math.max(W,H);
     const fg = cx.createRadialGradient(fx,fy,0,fx,fy,fr); fg.addColorStop(0,`rgba(170,190,190,${f.a})`); fg.addColorStop(1,'rgba(170,190,190,0)'); cx.fillStyle = fg; cx.fillRect(fx-fr,fy-fr,fr*2,fr*2); }
+  if (mode === 'fog' && state !== 'menu'){ const fz = cx.createLinearGradient(0, 0, 0, H); fz.addColorStop(0, 'rgba(150,165,165,.10)'); fz.addColorStop(.55, 'rgba(165,180,178,.30)'); fz.addColorStop(1, 'rgba(120,130,128,.18)'); cx.fillStyle = fz; cx.fillRect(-10,-10,W+20,H+20);
+    for (const f of fog){ const fx = ((f.x*1.7 + t*0.01) % 2 - .3)*W, fy = (f.y - .08)*H, fr = f.r*Math.max(W,H)*0.8; const fg = cx.createRadialGradient(fx,fy,0,fx,fy,fr); fg.addColorStop(0,'rgba(185,198,196,.16)'); fg.addColorStop(1,'rgba(185,198,196,0)'); cx.fillStyle = fg; cx.fillRect(fx-fr,fy-fr,fr*2,fr*2); } }
   for (const e of embers){ e.y -= e.v*dt; e.p += dt; if (e.y < -.05){ e.y = 1.05; e.x = Math.random(); } cx.fillStyle = `rgba(255,190,110,${.35+.25*Math.sin(e.p*2)})`; cx.beginPath(); cx.arc(e.x*W + Math.sin(e.p)*8, e.y*H, e.s, 0, 7); cx.fill(); }
   cx.restore();
   if (flash > 0){ cx.fillStyle = `rgba(255,245,230,${flash})`; cx.fillRect(0,0,W,H); flash -= dt*1.4; }
@@ -821,7 +896,8 @@ function begin(){
   $('hud').classList.add('on'); $('score').classList.add('on'); ['padWalk','padRun'].forEach(id => $(id).classList.add('show'));
   $('scoreVal').textContent = '0'; $('nightLbl').textContent = 'Night 1'; $('multLbl').textContent = '';
   state = 'card';
-  showCard('Night 1', '2:14 AM', touch ? 'Hold WALK. Stay in the light.' : 'Hold → to walk. Stay in the light.', '', 2.2, null);
+  bumpStreak();
+  showCard(mode ? MODES[mode][0] : 'Night 1', '2:14 AM', mode ? MODES[mode][1] : (touch ? 'Hold WALK. Stay in the light.' : 'Hold → to walk. Stay in the light.'), '', mode ? 2.8 : 2.2, null);
 }
 $('start').onclick = begin; $('again').onclick = begin;
 // ---------- share card ----------
@@ -867,13 +943,13 @@ async function makeCard(){
     x.shadowColor = 'rgba(0,0,0,.9)'; x.shadowBlur = 18; }
   // score
   x.shadowColor = 'rgba(231,150,60,.75)'; x.shadowBlur = 40; x.fillStyle = '#ffd98a'; x.font = '700 150px Cardo, Georgia, serif'; x.fillText(fmt(s.score || 0), W/2, 900); x.shadowBlur = 18; x.shadowColor = 'rgba(0,0,0,.9)';
-  const stats = [`${s.night || 1} ${s.night === 1 ? 'night' : 'nights'}`]; if (s.rank) stats.push(`#${s.rank} today`); if (s.gold) stats.push(`${s.gold} gold`);
+  const stats = [`${s.night || 1} ${s.night === 1 ? 'night' : 'nights'}`]; if (s.rank) stats.push(`#${s.rank} today`); if (s.gold) stats.push(`${s.gold} gold`); if (s.streak >= 2) stats.push(`${s.streak}-night streak`);
   x.fillStyle = '#e9e2d0'; x.font = '36px Cardo, Georgia, serif'; x.letterSpacing = '3px'; x.fillText(stats.join('   ·   '), W/2, 956); x.letterSpacing = '0px';
   // divider
   x.strokeStyle = 'rgba(231,192,106,.5)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(W/2 - 220, 995); x.lineTo(W/2 - 20, 995); x.moveTo(W/2 + 20, 995); x.lineTo(W/2 + 220, 995); x.stroke();
   x.fillStyle = '#e7c06a'; x.beginPath(); x.moveTo(W/2, 985); x.lineTo(W/2 + 9, 995); x.lineTo(W/2, 1005); x.lineTo(W/2 - 9, 995); x.fill();
   // challenge
-  const q1 = s.night > 1 ? `She took me on night ${s.night}.` : 'She took me on the first night.';
+  const q1 = s.beat ? `I beat ${s.beat}. She took me on night ${s.night}.` : s.night > 1 ? `She took me on night ${s.night}.` : 'She took me on the first night.';
   x.fillStyle = '#f3ecdb'; x.font = 'italic 46px Cardo, Georgia, serif'; x.fillText('“' + q1, W/2, 1068);
   x.fillText(`Can you beat ${fmt(s.score || 0)}?”`, W/2, 1124);
   // footer
@@ -892,7 +968,7 @@ $('share').onclick = async () => {
 };
 $('cardShare').onclick = async () => {
   shareRelic();
-  const s = lastShare || {}, text = `She took me on night ${s.night || 1}. Can you beat ${fmt(s.score || 0)}? 🕯️`, url = 'https://fablemare.com/follow/';
+  const s = lastShare || {}, text = `She took me on night ${s.night || 1}. Can you beat ${fmt(s.score || 0)}? 🕯️`, url = challengeUrl();
   const file = new File([cardBlob], 'dont-look-back.png', { type: 'image/png' });
   try {
     if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], text: text + ' ' + url });
@@ -901,11 +977,13 @@ $('cardShare').onclick = async () => {
   } catch(e){}
 };
 $('cardClose').onclick = () => $('cardModal').classList.remove('on');
+$('cardLink').onclick = async () => { const u = challengeUrl(); shareRelic(); try { await navigator.clipboard.writeText(`Can you beat my ${fmt((lastShare||{}).score || 0)} in Don't Look Back? ${u}`); $('cardLink').textContent = 'Link copied'; setTimeout(() => $('cardLink').textContent = 'Copy challenge link', 2000); } catch(e){ prompt('Your challenge link', u); } };
 $('cardSave').addEventListener('click', shareRelic);
 function shareRelic(){ if (!achGot.includes('share')) { achGot.push('share'); store.set('fm_dlb_ach', achGot); if ($('ach')) renderRelics(); } }
 $('cardModal').onclick = e => { if (e.target === $('cardModal')) $('cardModal').classList.remove('on'); };
-if (/[?&]test\b/.test(location.search)) window.__fmt = { newRun, die, unlock, set(o){ state = 'play'; night = o.night; score = o.score; runGold = o.gold; }, get card(){ return cardBlob; } };
+if (/[?&]test\b/.test(location.search)) window.__fmt = { newRun, die, unlock, get mode(){ return mode; }, get streak(){ return streak; }, set(o){ state = 'play'; night = o.night; score = o.score; runGold = o.gold; }, get card(){ return cardBlob; } };
 window.__fm = { get P(){return P;}, get Her(){return Her;}, get oud(){return oud;}, get state(){return state;}, get gold(){return gold;}, get lit(){return lightAt(P.x,t);}, get night(){return night;}, get score(){return score;} };
+initChallenge(); showStreak(); showSpecial(); showChallenge();
 requestAnimationFrame(frame);
 })();
 </script>
