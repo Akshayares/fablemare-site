@@ -146,3 +146,5 @@ footer a:hover{color:var(--ink)}
 @media (max-width:340px){nav{gap:14px} nav a{font-size:.8rem}}
 main,.legal-page,article{overflow-wrap:anywhere}
 .yt-link{display:inline-flex;align-items:center;gap:7px}
+footer>span{display:inline-flex;align-items:center;flex-wrap:wrap;column-gap:.45em;row-gap:4px;line-height:1.4}
+footer svg{display:block}
