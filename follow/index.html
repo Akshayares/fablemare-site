@@ -52,6 +52,7 @@ button{font:inherit;color:inherit}
 .pbar{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
 .pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7a5b2e,#e7c06a);transition:width 1.2s ease}
 .close.won{color:#ffd98a!important}
+#cardLinkBox:not([hidden]){display:block}
 .pulse .pn{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:6px;text-align:center}
 @media (max-width:640px){.track{max-width:calc(100% - 24px)}.track b{right:0;top:-20px;transform:none;padding-left:0;font-size:.58rem}}
 .whisper{position:fixed;left:0;right:0;top:30%;z-index:16;text-align:center;font-style:italic;color:#f2d9a6;font-size:clamp(1.2rem,3.4vw,2rem);letter-spacing:.04em;text-shadow:0 0 24px rgba(255,170,90,.55),0 2px 8px #000;opacity:0;transition:opacity .6s;pointer-events:none;padding:0 6vw}
@@ -274,6 +275,7 @@ body:has(#intro.on) .legal{display:none!important}
       <a class="btn ghost" id="cardSave" download="dont-look-back.png">Save image</a>
       <button class="btn ghost" id="cardClose">Close</button>
     </div>
+    <input id="cardLinkBox" readonly hidden aria-label="Your challenge link" style="width:min(520px,92%);margin:10px auto 0;background:#0d0f13;border:1px solid rgba(231,192,106,.5);color:#e9e0cf;padding:9px 10px;font:inherit;font-size:.85rem">
   </div>
 </div>
 <p class="legal" id="legal">An original game based on an old Emirati legend · <a href="/privacy.html">Privacy</a></p>
@@ -488,6 +490,7 @@ function showCard(n, big, sub, tally, dur, done){ $('cardN').textContent = n; $(
 let prev = performance.now();
 function frame(now){
   requestAnimationFrame(frame);
+  if (innerWidth !== W || innerHeight !== H) resize(); /* e.g. itch.io mobile fullscreen changes the frame size without a resize event */
   const dt = Math.min(0.05, (now - prev)/1000); prev = now; t += dt;
   if (state === 'play') update(dt);
   if (state === 'card') { cardT -= dt; if (cardT <= 0) { $('card').classList.remove('on'); const f = onCardDone; onCardDone = null; state = 'play'; if (f) f(); } }
@@ -976,8 +979,8 @@ $('cardShare').onclick = async () => {
     else { $('cardSave').click(); }
   } catch(e){}
 };
-$('cardClose').onclick = () => $('cardModal').classList.remove('on');
-$('cardLink').onclick = async () => { const u = challengeUrl(); shareRelic(); try { await navigator.clipboard.writeText(`Can you beat my ${fmt((lastShare||{}).score || 0)} in Don't Look Back? ${u}`); $('cardLink').textContent = 'Link copied'; setTimeout(() => $('cardLink').textContent = 'Copy challenge link', 2000); } catch(e){ prompt('Your challenge link', u); } };
+$('cardClose').onclick = () => { $('cardModal').classList.remove('on'); $('cardLinkBox').hidden = true; $('cardLink').textContent = 'Copy challenge link'; };
+$('cardLink').onclick = async () => { const u = challengeUrl(); shareRelic(); try { await navigator.clipboard.writeText(`Can you beat my ${fmt((lastShare||{}).score || 0)} in Don't Look Back? ${u}`); $('cardLink').textContent = 'Link copied'; setTimeout(() => $('cardLink').textContent = 'Copy challenge link', 2000); } catch(e){ const b = $('cardLinkBox'); b.hidden = false; b.value = u; b.focus(); b.select(); $('cardLink').textContent = 'Press and hold the link to copy'; } };
 $('cardSave').addEventListener('click', shareRelic);
 function shareRelic(){ if (!achGot.includes('share')) { achGot.push('share'); store.set('fm_dlb_ach', achGot); if ($('ach')) renderRelics(); } }
 $('cardModal').onclick = e => { if (e.target === $('cardModal')) $('cardModal').classList.remove('on'); };
